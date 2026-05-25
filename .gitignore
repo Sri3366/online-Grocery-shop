@@ -1,6 +1,19 @@
+# 1. Hide the hidden environment secrets file
 .env
-staticfiles/
-*.pyc
-db.sqlite3
+
+# 2. Hide local database engines (prevents uploading your local products/users to Git)
+*.sqlite3
+
+# 3. Hide all auto-generated Python compiled binaries and caches
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 4. Hide Django's local database migration history
+**/migrations/*
+!**/migrations/__init__.py
+
+# 5. Hide dynamic user uploads and static collection zones
 media/
+staticfiles/
