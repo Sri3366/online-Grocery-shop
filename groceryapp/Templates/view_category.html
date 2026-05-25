@@ -1,0 +1,42 @@
+{% extends 'admin_base.html' %}
+{% block main %}
+
+
+<div class="card border-0 shadow-sm rounded-3 bg-white">
+    <div class="card-body p-4">
+        <h5 class="fs-4 text-dark pb-2 mb-4" style="border-bottom: 2px solid orange; font-weight: 500;">All Category</h5>
+        <div class="container-fluid">
+            <table class="table table-bordered table-sm  align-middle m-0" id="example">
+                <thead>
+                    <tr class="fw-bold" style="font-size: 14px;">
+                        <th scope="col" class="py-3 px-3" style="width: 10%;">S.No.</th>
+                        <th scope="col" class="py-3 px-3" style="width: 40%;">Category Name</th>
+                        <th scope="col" class="py-3 px-3" style="width: 30%;">Creation Date</th>
+                        <th scope="col" class="py-3 px-3" style="width: 20%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0" style="font-size: 14px;">
+                    {% for i in category %}
+                    <tr>
+                        <td class="py-3 px-3 fw-normal text-secondary">{{forloop.counter}}</td>
+                        <td class="py-3 px-3 text-dark">{{i.name}}</td>
+                        <td class="py-3 px-3 text-muted fw-light">{{i.created}}</td>
+                        <td class="py-3 px-3">
+                            <a href="/edit-category/{{i.id}}/" class="text-success text-decoration-none fw-medium lh-sm">Edit</a>
+                            <a href="/delete-category/{{i.id}}/" class="text-danger text-decoration-none fw-medium lh-sm" onclick="return confirm('Are you Sure?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-5 fs-6 fw-light bg-light rounded-bottom">
+                                    <i class="fa-solid fa-folder-open me-2 text-secondary"></i> No category entry maps found in system.
+                                </td>
+                            </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock%}

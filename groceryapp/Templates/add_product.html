@@ -1,0 +1,101 @@
+{% extends 'admin_base.html' %}
+{% block main %}
+
+<div class="row justify-content-start g-0">
+    <div class="col-12">
+        
+        <div class="card border-0 shadow-sm rounded-3 bg-white">
+            <div class="card-body p-4 p-md-5">
+                
+                <h3 class="fs-4 text-dark mb-4 pb-2" style="border-bottom: 2px solid #ff9800; font-weight: 500;">
+                    Add Product
+                </h3>
+                
+                <form action="" method="post" enctype="multipart/form-data" class="mt-2">
+                    {% csrf_token %}
+                    
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="productCategorySelect" class="form-label text-secondary fw-medium mb-2" style="font-size: 14px;">
+                                    Product Category
+                                </label>
+                                <select id="productCategorySelect" name="category" class="form-select py-2 px-3 bg-white text-dark shadow-none border" style="font-size: 14px; border-color: #dee2e6; border-radius: 6px;" required>
+                                    <option value="" disabled>Choose Category</option>
+                                    {% for cat in category %}
+                                        <option value="{{ cat.id }}" {% if cat.id == product.category.id %} selected {% endif %}>
+                                            {{ cat.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="productNameInput" class="form-label text-secondary fw-medium mb-2" style="font-size: 14px;">
+                                    Product Name
+                                </label>
+                                <input type="text" id="productNameInput" name="name" class="form-control py-2 px-3 bg-white text-dark shadow-none border" placeholder="Product Name" style="font-size: 14px; border-color: #dee2e6; border-radius: 6px;" value="{{ product.name }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="productPriceInput" class="form-label text-secondary fw-medium mb-2" style="font-size: 14px;">
+                                    Product Price
+                                </label>
+                                <input type="number" step="0.01" id="productPriceInput" name="price" class="form-control py-2 px-3 bg-white text-dark shadow-none border" placeholder="Product Price" style="font-size: 14px; border-color: #dee2e6; border-radius: 6px;" value="{{ product.price }}" required>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="productDiscountInput" class="form-label text-secondary fw-medium mb-2" style="font-size: 14px;">
+                                    Discount
+                                </label>
+                                <input type="text" id="productDiscountInput" name="discount" class="form-control py-2 px-3 bg-white text-dark shadow-none border" placeholder="Apply Discount" style="font-size: 14px; border-color: #dee2e6; border-radius: 6px;" value="{{ product.discount }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="productImageInput" class="form-label text-secondary fw-medium mb-2" style="font-size: 14px;">
+                                    Product Image
+                                </label>
+                                <input type="file" id="productImageInput" name="image" class="form-control py-2 px-3 bg-white text-dark shadow-none border" style="font-size: 14px; border-color: #dee2e6; border-radius: 6px;">
+                                {% if product.image %}
+                                    <div class="form-text mt-1 text-muted" style="font-size: 12px;">
+                                        Current: <a href="{{ product.image.url }}" target="_blank" class="text-decoration-none">View Existing Image</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="productDescriptionInput" class="form-label text-secondary fw-medium mb-2" style="font-size: 14px;">
+                                    Description
+                                </label>
+                                <textarea id="productDescriptionInput" name="description" rows="1" class="form-control py-2 px-3 bg-white text-dark shadow-none border" placeholder="write description here" style="font-size: 14px; border-color: #dee2e6; border-radius: 6px; resize: vertical;" required>{{ product.description }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-start pt-2">
+                        <button type="submit" class="btn btn-primary px-4 py-2 text-capitalize fw-medium border-0" style="background-color: #0d6efd; border-radius: 6px; font-size: 14px;">
+                            Update Product
+                        </button>
+                    </div>
+                    
+                </form>
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %}

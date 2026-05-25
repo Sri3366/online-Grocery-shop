@@ -1,0 +1,58 @@
+/* Sidebar Layout Framework */
+#wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background-color: #ffffff;
+    transition: all 0.3s cubic-bezier(0.74, 0.01, 0.3, 1);
+}
+
+/* 🟢 Crucial: Toggles sidebar out of view */
+#sidebar.active {
+    margin-left: -250px;
+}
+
+/* Internal Links Custom Styling */
+.nav-link-custom {
+    color: #212529 !important;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-link-custom:hover {
+    background-color: #f8f9fa !important;
+    color: #0d6efd !important; 
+}
+
+/* 🟢 Light-blue/Cyan icons matching your screenshot */
+.sidebar-scroll .fa-solid {
+    color: #00bcff !important; 
+}
+
+/* 🔴 Logout Hover: Turns background soft red, text and icon dark red */
+.logout-item:hover {
+    background-color: #fff5f5 !important;
+    color: #dc3545 !important;
+}
+
+.logout-item:hover i {
+    color: #dc3545 !important;
+}
+
+/* Custom internal scroll engine for the sidebar links */
+.sidebar-scroll {
+    overflow-y: auto;
+    height: calc(100vh - 150px);
+}
+.sidebar-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+    background: #e9ecef;
+    border-radius: 10px;
+}

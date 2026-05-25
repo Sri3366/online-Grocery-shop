@@ -1,0 +1,172 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard - Online Grocery Shop</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+  </head>
+  <body class="bg-light overflow-x-hidden" style="font-family: 'Ubuntu', sans-serif;">
+
+    <div id="wrapper" class="d-flex vh-100">
+        
+        <nav id="sidebar" class="border-end d-flex flex-column bg-white">
+            
+            <div class="px-3 pt-4 pb-2 text-center">
+                <div class="fw-bold text-uppercase mb-3" style="letter-spacing: 0.5px; color: #1a237e; font-size: 12px;">
+                    ONLINE GROCERY SHOP
+                </div>
+                
+                <div class="d-flex align-items-center justify-content-start mt-3 mb-2 px-2">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2202/2202112.png" alt="Admin" class="rounded-circle border border-2 border-light shadow-sm bg-white" width="50" height="50">
+                    <div class="ms-3 text-start">
+                        <h5 class="fs-5 fw-normal text-dark mb-0">Admin</h5>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="mx-3 my-1 opacity-25">
+
+            <div class="sidebar-scroll px-2 py-2">
+                <ul class="nav flex-column gap-1">
+                    
+                    <li class="nav-item">
+                        <a href="{% url 'admin_dashboard' %}" class="nav-link nav-link-custom fw-bold d-flex align-items-center py-2 px-3 rounded text-dark">
+                            <i class="fa-solid fa-gauge me-3" style="width: 20px;"></i> Dashboard
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#categoryCollapse" class="nav-link nav-link-custom fw-bold d-flex align-items-center justify-content-between py-2 px-3 rounded text-dark" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                            <span><i class="fa-solid fa-layer-group me-3" style="width: 20px;"></i>Grocery Category</span>
+                            <i class="fa-solid fa-caret-down text-muted ms-auto" style="font-size: 11px;"></i>
+                        </a>
+                        <div class="collapse bg-light rounded mx-2 shadow-sm border" id="categoryCollapse">
+                            <ul class="nav flex-column ps-4 py-1" style="font-size: 13px;">
+                                <li><a href="{% url 'add_category' %}" class="nav-link text-secondary py-1">Add Category</a></li>
+                                <li><a href="{% url 'view_category' %}" class="nav-link text-secondary py-1">View Categories</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#productCollapse" class="nav-link nav-link-custom fw-bold d-flex align-items-center justify-content-between py-2 px-3 rounded text-dark" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                            <span><i class="fa-solid fa-basket-shopping me-3" style="width: 20px;"></i>Manage Product</span>
+                            <i class="fa-solid fa-caret-down text-muted ms-auto" style="font-size: 11px;"></i>
+                        </a>
+                        <div class="collapse bg-light rounded mx-2 shadow-sm border" id="productCollapse">
+                            <ul class="nav flex-column ps-4 py-1" style="font-size: 13px;">
+                                <li><a href="{% url 'add_product' %}" class="nav-link text-secondary py-1">Add Product</a></li>
+                                <li><a href="{% url 'view_product' %}" class="nav-link text-secondary py-1">View Products</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#userCollapse" class="nav-link nav-link-custom fw-bold d-flex align-items-center justify-content-between py-2 px-3 rounded text-dark" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                            <span><i class="fa-solid fa-users me-3" style="width: 20px;"></i>Manage User</span>
+                            <i class="fa-solid fa-caret-down text-muted ms-auto" style="font-size: 11px;"></i>
+                        </a>
+                        <div class="collapse bg-light rounded mx-2 shadow-sm border" id="userCollapse">
+                            <ul class="nav flex-column ps-4 py-1" style="font-size: 13px;">
+                                <li><a href="/manage-user/" class="nav-link text-secondary py-1">View Users</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#orderCollapse" class="nav-link nav-link-custom fw-bold d-flex align-items-center justify-content-between py-2 px-3 rounded text-dark" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                            <span><i class="fa-solid fa-truck-ramp-box me-3" style="width: 20px;"></i>Manage Order</span>
+                            <i class="fa-solid fa-caret-down text-muted ms-auto" style="font-size: 11px;"></i>
+                        </a>
+                        <div class="collapse bg-light rounded mx-2 shadow-sm border" id="orderCollapse">
+                            <ul class="nav flex-column ps-4 py-1" style="font-size: 13px;">
+                                <li><a class="nav-link text-secondary py-1" href="/manage-order/?action=1">New Order</a></li>
+                                <li><a class="nav-link text-secondary py-1" href="/manage-order/?action=2">Dispatch Order</a></li>
+                                <li><a class="nav-link text-secondary py-1" href="/manage-order/?action=3">On the way</a></li>
+                                <li><a class="nav-link text-secondary py-1" href="/manage-order/?action=4">Delivered Order</a></li>
+                                <li><a class="nav-link text-secondary py-1" href="/manage-order/?action=5">Cancel Order</a></li>
+                                <li><a class="nav-link text-secondary py-1" href="/manage-order/?action=6">Return Order</a></li>
+                                <li><a class="nav-link text-secondary py-1" href="/manage-order/?action=0">All Order</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#feedbackCollapse" class="nav-link nav-link-custom fw-bold d-flex align-items-center justify-content-between py-2 px-3 rounded text-dark" data-bs-toggle="collapse" role="button" aria-expanded="false">
+                            <span><i class="fa-solid fa-chart-bar me-3" style="width: 20px;"></i>Manage Feedback</span>
+                            <i class="fa-solid fa-caret-down text-muted ms-auto" style="font-size: 11px;"></i>
+                        </a>
+                        <div class="collapse bg-light rounded mx-2 shadow-sm border" id="feedbackCollapse">
+                            <ul class="nav flex-column ps-4 py-1" style="font-size: 13px;">
+                                <li><a class="nav-link text-secondary py-1" href="/manage-feedback/?action=1">Read Feedback</a></li>
+                                <li><a class="nav-link text-secondary py-1" href="/manage-feedback/?action=2">Unread Feedback</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/admin-change-password/" class="nav-link nav-link-custom fw-bold d-flex align-items-center py-2 px-3 rounded text-dark">
+                            <i class="fa-solid fa-key me-3" style="width: 20px;"></i> Change Password
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="{% url 'logout' %}" class="nav-link nav-link-custom logout-item fw-bold d-flex align-items-center py-2 px-3 rounded text-danger">
+                            <i class="fa-solid fa-right-from-bracket me-3" style="width: 20px;"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="flex-grow-1 p-4 p-md-5 overflow-y-auto h-100" style="background: linear-gradient(135deg, #4b00e0 0%, #7e0cee 50%, #af16ff 100%);">
+            
+            <div class="d-flex align-items-center justify-content-between mb-5">
+                
+                <button type="button" id="sidebarToggle" class="btn btn-white bg-white text-dark shadow-sm border-0 px-3 py-1.5 rounded-pill fw-bold d-inline-flex align-items-center" style="font-size: 12px; letter-spacing: 0.5px;">
+                    <i class="fa-solid fa-bars me-2 text-dark"></i> TOGGLE
+                </button>
+                
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUserRight" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 14px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2202/2202112.png" alt="Admin" class="rounded-circle border border-2 border-white shadow-sm me-2" width="32" height="32">
+                        <span class="fw-medium d-none d-sm-inline">Admin</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" aria-labelledby="dropdownUserRight" style="font-size: 13px;">
+                        <li><a class="dropdown-item py-1.5" href="{% url 'admin_dashboard' %}"><i class="fa-solid fa-user text-muted me-2"></i> Dashboard</a></li>
+                        <li><a class="dropdown-item py-1.5" href="/admin-change-password/"><i class="fa-solid fa-key text-muted me-2"></i> Change Password</a></li>
+                        <li><hr class="dropdown-divider opacity-50"></li>
+                        <li><a class="dropdown-item text-danger py-1.5 fw-bold" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="text-white">
+                {% block main %}
+                <h1 class="display-6 fw-bold">Welcome to Admin Dashboard</h1>
+                <p class="text-white-50 fs-6">Select options on your left pane panel grid system to adjust product configurations.</p>
+                {% endblock %}
+            </div>
+
+        </div>
+        
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/myjs.js' %}"></script>
+
+    {% for i in messages %}
+    <script>
+        alert('{{i}}');
+    </script>
+    {% endfor %}
+  </body>
+</html>

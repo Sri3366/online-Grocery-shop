@@ -1,0 +1,65 @@
+body {
+  overflow-x: hidden;
+  background-color: #f8f9fa;
+}
+
+#wrapper {
+  overflow-x: hidden;
+}
+
+#sidebar-wrapper {
+  min-height: calc(100vh - 56px); /* Perfect fit below your standard header */
+  width: 16rem;
+  margin-left: -16rem;
+  transition: margin 0.25s ease-out;
+  z-index: 1000;
+}
+
+#sidebar-wrapper .sidebar-heading {
+  font-size: 1.1rem;
+}
+
+#sidebar-wrapper .list-group {
+  width: 16rem;
+}
+
+#page-content-wrapper {
+  min-width: 100vw;
+  width: 100%;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+  margin-left: 0;
+}
+
+/* Hover transitions for your item cards */
+.transition-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.transition-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Custom Multi-line Text Clamp CSS rule */
+.text-clamp {
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* Tablet and Desktop Layout Configurations */
+@media (min-width: 768px) {
+  #sidebar-wrapper {
+    margin-left: 0;
+  }
+
+  #page-content-wrapper {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #wrapper.toggled #sidebar-wrapper {
+    margin-left: -16rem;
+  }
+}

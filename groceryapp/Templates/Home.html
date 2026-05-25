@@ -1,0 +1,476 @@
+{% extends 'navigation.html' %}
+{% load static %}
+
+{% block body %}
+<style>
+    /* Premium Design Variables & Custom Styling */
+    :root {
+        --primary-green: #2ecc71;
+        --dark-green: #27ae60;
+        --accent-gold: #f1c40f;
+        --dark-charcoal: #2c3e50;
+        --light-bg: #f8f9fa;
+        --footer-dark: #1a252f;
+    }
+
+    body {
+        background-color: var(--light-bg);
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Hero Section Canvas */
+    .hero-section {
+        background: linear-gradient(135deg, rgba(46, 204, 113, 0.9), rgba(39, 174, 96, 0.95)), 
+                    url('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1974&auto=format&fit=crop') no-repeat center center;
+        background-size: cover;
+        padding: 100px 0;
+        color: white;
+        border-radius: 0 0 50px 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .search-bar-premium {
+        border-radius: 50px;
+        padding: 15px 25px;
+        border: none;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .search-btn-premium {
+        border-radius: 50px;
+        padding: 12px 30px;
+        background-color: var(--dark-charcoal);
+        color: white;
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .search-btn-premium:hover {
+        background-color: #1a252f;
+        transform: translateY(-2px);
+    }
+
+    /* Section Headers styling */
+    .section-title {
+        position: relative;
+        font-weight: 700;
+        color: var(--dark-charcoal);
+        margin-bottom: 40px;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background-color: var(--accent-gold);
+        border-radius: 2px;
+    }
+
+    /* Interactive Category Cards */
+    .category-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+        cursor: pointer;
+    }
+
+    .category-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+    }
+
+    .category-overlay {
+        background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.1));
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        display: flex;
+        align-items: flex-end;
+        padding: 20px;
+    }
+
+    /* Premium Product Item Matrix Cards */
+    .product-card-premium {
+        border: none;
+        border-radius: 20px;
+        background: white;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .product-card-premium:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    }
+
+    .badge-discount {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: #e74c3c;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        z-index: 2;
+    }
+
+    .product-img-wrapper {
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background-color: #fcfcfc;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .product-img-wrapper img {
+        max-height: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    .product-card-premium:hover .product-img-wrapper img {
+        transform: scale(1.08);
+    }
+
+    .btn-add-cart {
+        background-color: var(--primary-green);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-weight: 600;
+        padding: 8px 20px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-add-cart:hover {
+        background-color: var(--dark-green);
+        box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+    }
+
+    /* Trust Elements Grid Badge */
+    .feature-badge {
+        padding: 30px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+        height: 100%;
+    }
+
+    .feature-icon-box {
+        width: 60px;
+        height: 60px;
+        background-color: rgba(46, 204, 113, 0.1);
+        color: var(--primary-green);
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    /* Premium Footer Styling */
+    .premium-footer {
+        background-color: var(--dark-charcoal);
+        color: #ecf0f1;
+        padding-top: 60px;
+        margin-top: 80px;
+        border-radius: 50px 50px 0 0;
+    }
+
+    .footer-brand h3 {
+        color: white;
+        font-weight: 700;
+    }
+
+    .footer-brand h3 span {
+        color: var(--primary-green);
+    }
+
+    .footer-link-heading {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .footer-link-heading::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 35px;
+        height: 3px;
+        background-color: var(--primary-green);
+        border-radius: 2px;
+    }
+
+    .footer-links-list a {
+        color: #bdc3c7;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-block;
+        margin-bottom: 12px;
+    }
+
+    .footer-links-list a:hover {
+        color: var(--primary-green);
+        transform: translateX(5px);
+    }
+
+    .social-icon-btn {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(255,255,255,0.05);
+        color: white;
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .social-icon-btn:hover {
+        background-color: var(--primary-green);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    .footer-bottom-bar {
+        background-color: var(--footer-dark);
+        padding: 20px 0;
+        margin-top: 40px;
+        font-size: 0.9rem;
+        color: #95a5a6;
+    }
+</style>
+
+<section class="hero-section mb-5">
+    <div class="container">
+        <div class="row align-items-center py-4">
+            <div class="col-lg-7 text-center text-lg-start mb-4 mb-lg-0">
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold">100% Organic & Fresh</span>
+                <h1 class="display-4 fw-bold mb-3">Premium Groceries <br>Delivered Right To Your Door</h1>
+                <p class="lead mb-4 opacity-90">Handpicked organic fruits, crisp farm-fresh vegetables, premium dry fruits, and everyday essentials processed under peak hygienic environments.</p>
+                
+                <form action="/user-product/0/" method="GET" class="d-sm-flex p-1 bg-white rounded-pill shadow-sm max-width-md" style="max-width: 600px;">
+                    <input type="text" name="search" class="form-control search-bar-premium border-0 flex-grow-1" placeholder="Search daily essentials, dry fruits, fresh items...">
+                    <button type="submit" class="btn search-btn-premium mt-2 mt-sm-0 ms-sm-2">Search</button>
+                </form>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block text-center">
+                <img src="https://cdn3d.iconscout.com/3d/premium/thumb/grocery-bag-5168874-4323719.png" alt="Grocery Basket 3D" class="img-fluid" style="max-height: 400px; filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.15));">
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    
+    <section class="row g-4 mb-5 text-center text-md-start">
+        <div class="col-md-4">
+            <div class="feature-badge">
+                <div class="feature-icon-box mx-auto mx-md-0"><i class="fas fa-shipping-fast"></i></div>
+                <h5 class="fw-bold">Lightning Fast Delivery</h5>
+                <p class="text-muted m-0">Get your food elements, baker items, and groceries delivered securely directly to your doorstep in record time.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-badge">
+                <div class="feature-icon-box mx-auto mx-md-0"><i class="fas fa-shield-alt"></i></div>
+                <h5 class="fw-bold">Premium Quality Guaranteed</h5>
+                <p class="text-muted m-0">Our items undergo strict sanitation matrix processing checkouts before departing fulfillment hubs.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-badge">
+                <div class="feature-icon-box mx-auto mx-md-0"><i class="fas fa-tags"></i></div>
+                <h5 class="fw-bold">Unbeatable Discount Structure</h5>
+                <p class="text-muted m-0">Enjoy incredible savings with automatically applied discounts directly inside checkout carts.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <h3 class="section-title">Shop by Category</h3>
+        <div class="row g-4">
+            <div class="col-6 col-md-3">
+                <div class="card category-card ratio ratio-1x1 bg-dark text-white">
+                    <img src="https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?q=80&w=500&auto=format&fit=crop" class="card-img object-fit-cover opacity-60" alt="Dry Fruits">
+                    <div class="category-overlay">
+                        <h4 class="fw-bold m-0 fs-5 text-white">Premium Dry Fruits</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card category-card ratio ratio-1x1 bg-dark text-white">
+                    <img src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?q=80&w=500&auto=format&fit=crop" class="card-img object-fit-cover opacity-60" alt="Fresh Produce">
+                    <div class="category-overlay">
+                        <h4 class="fw-bold m-0 fs-5 text-white">Fresh Produce</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card category-card ratio ratio-1x1 bg-dark text-white">
+                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=500&auto=format&fit=crop" class="card-img object-fit-cover opacity-60" alt="Bakery">
+                    <div class="category-overlay">
+                        <h4 class="fw-bold m-0 fs-5 text-white">Bakery Staples</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card category-card ratio ratio-1x1 bg-dark text-white">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=500&auto=format&fit=crop" class="card-img object-fit-cover opacity-60" alt="Daily Essentials">
+                    <div class="category-overlay">
+                        <h4 class="fw-bold m-0 fs-5 text-white">Daily Essentials</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="section-title m-0">Trending Hot Deals</h3>
+            <a href="/user-product/0/" class="btn btn-outline-success rounded-pill px-4 fw-semibold">View All Catalog Elements</a>
+        </div>
+        
+        <div class="row g-4">
+            {% for product in products %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card product-card-premium h-100 shadow-sm">
+                    
+                    {% if product.discount and product.discount != "0" %}
+                        <span class="badge-discount">
+                            Save {{ product.discount }}{% if "%" not in product.discount|stringformat:"s" %}%{% endif %}
+                        </span>
+                    {% else %}
+                        <span class="badge-discount">Fresh</span>
+                    {% endif %}
+                    
+                    <div class="product-img-wrapper">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No Image">
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-body d-flex flex-column p-4">
+                        <span class="text-muted small fw-semibold text-uppercase mb-1">
+                            {{ product.category.name }}
+                        </span>
+                        <h5 class="card-title fw-bold text-dark mb-2 fs-6">
+                            {{ product.name }}
+                        </h5>
+                        
+                        <div class="d-flex align-items-center mb-3 mt-auto">
+                            <span class="text-success fw-bold fs-5 final-selling-price"
+                                  data-price="{{ product.price }}"
+                                  data-discount="{{ product.discount }}">
+                                Rs. {{ product.price }}
+                            </span>
+                        </div>
+                        
+                        <a href="/product-detail/{{ product.id }}/" class="btn btn-add-cart w-100 text-center text-decoration-none d-block">
+                            <i class="fas fa-shopping-basket me-2"></i>View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-4">
+                <p class="text-muted">No premium items loaded in the shop directory yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<footer class="premium-footer">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6 footer-brand">
+                <h3 class="mb-3">Lakshmi Durga<span> Traders</span></h3>
+                <p class="text-muted-all opacity-75 mb-4">Your premium online catalog destination for high-quality dry fruits, everyday essentials, grocery products, and home deliveries.</p>
+                <div class="d-flex">
+                    <a href="#" class="social-icon-btn"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon-btn"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon-btn"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon-btn"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+           <div class="col-lg-2 col-md-6 footer-links-list">
+    <h5 class="footer-link-heading">Quick Shop</h5>
+    <a href="{% url 'home' %}">Home Layout</a><br>
+    <a href="/user-product/0/">Product Catalog</a><br>
+    <a href="{% url 'cart' %}">My Cart Matrix</a><br>
+    
+    {% if request.user.is_authenticated %}
+        <a href="{% url 'myorder' %}">Track Bookings</a>
+    {% else %}
+        <a href="{% url 'userlogin' %}?next={% url 'myorder' %}">Track Bookings</a>
+    {% endif %}
+</div>
+
+<div class="col-lg-3 col-md-6 footer-links-list">
+    <h5 class="footer-link-heading">Support & Feedback</h5>
+    <a href="{% url 'about' %}">About Operations</a><br>
+    <a href="{% url 'contact' %}">Contact Hub</a><br>
+
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'user_feedback' %}">Submit Feedback</a>
+    {% else %}
+    <a href="{% url 'userlogin' %}?next={% url 'user_feedback' %}">Submit Feedback</a>
+    {% endif %}
+
+    <br><a href="{% url 'admin_login' %}">Staff Administration</a>
+</div>
+
+            <div class="col-lg-3 col-md-6">
+                <h5 class="footer-link-heading">Fulfillment Office</h5>
+                <p class="text-muted-all opacity-75 mb-2"><i class="fas fa-map-marker-alt text-success me-2"></i> Lakshmi Durga Traders, Main Road, Local Hub</p>
+                <p class="text-muted-all opacity-75 mb-2"><i class="fas fa-envelope text-success me-2"></i> support@lakshmidurga.com</p>
+                <p class="text-muted-all opacity-75"><i class="fas fa-phone-alt text-success me-2"></i> +91 98765 43210</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-bottom-bar text-center">
+        <div class="container">
+            <p class="m-0">&copy; 2026 Lakshmi Durga Traders. All Premium Rights Reserved. | Created with Pride</p>
+        </div>
+    </div>
+</footer>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.final-selling-price').forEach(span => {
+            const rawPrice = span.getAttribute('data-price');
+            const rawDiscount = span.getAttribute('data-discount');
+            const originalPrice = parseFloat(rawPrice);
+            
+            if (!isNaN(originalPrice) && rawDiscount) {
+                const discountPercent = parseFloat(rawDiscount.toString().replace('%', '').trim());
+                if (!isNaN(discountPercent) && discountPercent > 0) {
+                    const finalPrice = originalPrice * (100 - discountPercent) / 100;
+                    span.textContent = "Rs. " + Math.round(finalPrice);
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

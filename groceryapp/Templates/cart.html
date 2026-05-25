@@ -1,0 +1,106 @@
+<!doctype html>
+{% load static custom_tags %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Cart</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+
+{% include 'navigation.html' %}
+
+<div class="container-fluid my-4">
+    <div class="container bg-white p-4 rounded shadow-sm">
+        
+        <div class="row align-items-center mb-4">
+            <div class="col-md-6">
+                <h2 class="m-0" style="font-family: 'Times New Roman', Times, serif; font-weight: bold;">My Cart</h2>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="/user-product/0/" class="btn btn-warning me-2">Continue Shopping</a>   
+                <a href="/booking/" class="btn btn-info">Buy Now</a>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle" style="width: 100%">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" style="width: 120px;">Image</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col" style="width: 180px;">Quantity</th>
+                        <th scope="col">Total</th>
+                        <th scope="col" style="width: 80px;">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i, j in product.items %}
+                    <tr>
+                        <td>
+                            <img class="img-thumbnail" src="{{i|productimage}}" alt="product" style="width:100px; height:100px; object-fit: cover;">
+                        </td>
+                        
+                        <td>
+                            <a href="/product-detail/{{i}}/" class="text-decoration-none fw-bold text-dark">{{i|productname}}</a>
+                        </td>
+                        
+                        <td class="fw-semibold text-secondary">
+                            Rs. {{i|applydiscount}}
+                        </td>
+                        
+                        <td>
+                            <div class="input-group">
+                                <a href="/incredecre/{{i}}/?action=decre" class="btn btn-warning" id="decrebtn-{{forloop.counter}}">-</a>
+                                <input type="text" class="form-control text-center bg-white" id="shop_qty-{{forloop.counter}}" name="qtybutton" value="{{j}}" readonly style="max-width: 60px; border: 1px solid #ced4da; font-weight: 500;"/>
+                                <a href="/incredecre/{{i}}/?action=incre" class="btn btn-warning">+</a>
+                            </div>
+                        </td>
+                        
+                        <td class="fw-bold text-dark" id="totalprice-{{forloop.counter}}">
+                            {% producttotalprice i j %}
+                        </td>
+                        
+                        <td class="text-center">
+                            <a href="/deletecart/{{i}}/" class="btn btn-danger btn-sm shadow-sm"><i class="fa-solid fa-trash-can"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    <tr class="table-light fw-bold fs-5">
+                        <td colspan="4" class="text-end">Grand Total:</td>
+                        <td colspan="2" id="total-price" class="text-success">Rs. 0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        var prolenth = '{{lengthpro}}';
+        var mytotal = 0;
+        
+        for (var i = 1; i <= prolenth * 1; i++) {
+            var element = document.getElementById('totalprice-' + i);
+            if (element) {
+                // Strip away any currency characters like "Rs." if they are injected by the template tag
+                var textValue = element.innerHTML.replace(/[^\d.]/g, '');
+                var totalprice = parseFloat(textValue);
+                if (!isNaN(totalprice)) {
+                    mytotal += totalprice;
+                }
+            }
+        }
+        document.getElementById('total-price').innerHTML = "Rs. " + mytotal.toFixed(2);
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

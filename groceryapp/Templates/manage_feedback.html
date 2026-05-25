@@ -1,0 +1,79 @@
+{% extends 'admin_base.html' %}
+{% block main %}
+
+<div class="card shadow">
+    <div class="card-body">
+
+        <h5 class="p-2" style="border-bottom: 2px solid orange;">View Feedback</h5>
+        <div class="container-fluid">
+
+            <table class="table table-bordered table-sm" id="example">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>User</th>
+                        <th>View Comment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in feedback %}
+                <tr id="row-{{ forloop.counter }}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.user.first_name }} {{ i.user.last_name }}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ forloop.counter }}">
+                            View Comment
+                        </button>
+
+                        <div class="modal fade text-dark" id="exampleModal-{{ forloop.counter }}" onblur="changeStatus('{{ i.id }}', '{{ forloop.counter }}', '{{ i.status }}')" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel-{{ forloop.counter }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel-{{ forloop.counter }}">{{ i.user.first_name }} {{ i.user.last_name }}'s Feedback</h5>
+                                        <button type="button" class="btn-close" data-bs-submit="modal" data-bs-dismiss="modal" aria-label="Close" onclick="changeStatus('{{ i.id }}', '{{ forloop.counter }}', '{{ i.status }}')"></button>
+                                    </div>
+                                    <div class="modal-body text-start">
+                                        <p class="mb-0 bg-light p-3 rounded border" style="white-space: pre-line;">{{ i.message }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="changeStatus('{{ i.id }}', '{{ forloop.counter }}', '{{ i.status }}')">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="{% url 'delete_feedback' i.id %}" class="text-danger text-decoration-none"
+                           onclick="return confirm('Are You Sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-3">No feedback found.</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeStatus(pid, count, status_id){
+        // Triggers your background endpoint view function via AJAX GET
+        var url = '/feedback-read/'+pid+'/';
+        $.get(url, function(data, status){
+            // If the current panel layout view tab context state is Unread ("2")
+            if(status_id == '2'){
+                // Automatically slide/hide the row item cleanly from view without hard-refreshing
+                var rowElement = document.getElementById('row-'+count);
+                if(rowElement) {
+                    rowElement.style.display = 'none';
+                }
+            }
+        });
+    }
+</script>
+
+{% endblock %}

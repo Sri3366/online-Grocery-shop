@@ -1,0 +1,119 @@
+/* ==========================================================================
+   PREMIUM PICZOOMER LAYOUT ENGINE ENGINE FIXES
+   ========================================================================== */
+.picZoomer {
+    position: relative;
+    width: 100%;
+    max-width: 400px; /* Restricts scaling boundary constraints */
+    margin: 0 auto;
+    display: block;
+}
+
+.picZoomer-pic-wp {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    background-color: #ffffff;
+    width: 100% !important; /* Forces responsive scaling calculation */
+    height: 400px !important; /* Locked calculation ceiling frame */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 🟢 FIX: Cleaned image properties so jQuery can evaluate exact scale widths */
+.my_img {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain;
+    display: block;
+}
+
+/* 🟢 FIX: Adjusted position configurations to protect right-side columns */
+.picZoomer-zoom-wp {
+    display: none;
+    position: absolute;
+    z-index: 9999; /* Forces layer hierarchy isolation */
+    overflow: hidden;
+    border: 1px solid #ddd;
+    background: #ffffff;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    border-radius: 12px;
+    top: 0 !important;
+    left: 105% !important; /* Floats the window perfectly into empty space */
+    width: 450px !important;
+    height: 400px !important;
+}
+
+.picZoomer-zoom-pic {
+    position: absolute;
+    max-width: none !important; /* Prevents Bootstrap from compressing zoom images */
+    max-height: none !important;
+}
+
+/* Modern Lens Cursor Tracker Display Layout Styles */
+.picZoomer-cursor {
+    display: none;
+    cursor: crosshair;
+    position: absolute;
+    width: 120px !important;
+    height: 120px !important;
+    border-radius: 50%;
+    border: 2px solid #fd7f34;
+    background-color: rgba(253, 127, 52, 0.2) !important;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+/* Comprehensive Responsive Interface Layout Rules */
+@media (max-width: 767px) {
+    .picZoomer-zoom-wp {
+        display: none !important; /* Disables zoom on mobile view shelves to prevent layout breakage */
+    }
+}
+
+/* Micro interaction transitions */
+.transition-btn {
+    transition: all 0.2s ease-in-out;
+}
+.transition-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(0.95);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+.transition-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Core Typography configurations */
+.product-name {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.5px;
+}
+
+/* Ensure the parent block can let child components sit on top of other content layers */
+.picZoomer {
+    position: relative !important;
+    overflow: visible !important; /* Allow the zoom panel window to break out */
+}
+
+/* Force the dynamic plugin wrapper container block to handle the inside cropping */
+.picZoomer-pic-wp {
+    position: relative;
+    overflow: hidden !important; /* This clips the image to its box frame */
+}
+
+/* Force the flying preview container to sit on top of your right column text information */
+.picZoomer-zoom-wp {
+    display: none;
+    position: absolute;
+    z-index: 2000 !important; /* Pushes the layer in front of text elements */
+    overflow: hidden !important;
+    border: 1px solid #ccc;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}

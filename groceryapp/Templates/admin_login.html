@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* 🟢 Forces the background image to cover the entire browser window */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #login-page-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                        url("{% static 'images/dry.png' %}") no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 50px; /* Adjusts vertical layout spacing */
+        }
+
+        /* Merges icon and input field visually into one clean white block */
+        .input-group-text {
+            border-right: none !important;
+        }
+        .form-control {
+            border-left: none !important;
+        }
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #dee2e6;
+        }
+       
+    /* ... keep your body and background image settings the same ... */
+
+    /* 🟢 LIGHT, FROSTED-GLASS WHITE CARD UTILITIES */
+    .custom-card {
+        background-color: rgba(255, 255, 255, 0.12) !important; /* 25% semi-transparent white */
+        backdrop-filter: blur(10px); /* Gives it that beautiful frosted glass look */
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.4); /* Bright glass edge outline */
+        border-radius: 15px;
+        box-shadow: 0px 12px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .login-box-width {
+        width: 100%;
+        max-width: 600px; /* Keeps the card nicely wide */
+    }
+
+        
+    </style>
+</head>
+
+<body id="login-page-bg">
+
+    {% include "navigation.html" %}
+
+    <div class="login-wrapper">
+        <div style="width: 100%; max-width: 450px; padding: 15px;">
+            <div class="card custom-card text-white p-4">
+                
+               <div class="text-center mt-2 mb-4 d-flex flex-column align-items-center justify-content-center">
+                    <div class="rounded-circle bg-dark border border-2 border-info d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                    <i class="fa-regular fa-user fa-4x text-info"></i>
+                </div>
+                    <h3 class="fw-normal mt-2">Admin Login</h3>
+                </div>
+
+                <form action="" method="post">
+                    {% csrf_token %}
+                    
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-white"><i class="fa fa-user text-muted"></i></span>
+                        <input type="text" name="username" class="form-control py-2" placeholder="UserName" required>
+                    </div>
+                    
+                    <div class="input-group mb-4">
+                        <span class="input-group-text bg-white"><i class="fa fa-lock text-muted"></i></span>
+                        <input type="password" name="password" class="form-control py-2" placeholder="Password" required>
+                    </div>
+                    
+                    <div class="d-flex align-items-center justify-content-between mt-2">
+                        <button type="submit" class="btn btn-success px-4 py-2">Login</button>
+                        <a href="{% url 'main' %}" class="text-white text-decoration-underline small">Go Back To HomePage</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    {% if msg %}
+    <script>
+        alert('{{ msg }}');
+    </script>
+    {% endif %}
+
+</body>
+</html>

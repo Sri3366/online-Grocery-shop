@@ -1,0 +1,76 @@
+{% extends 'admin_base.html' %}
+{% block main %}
+
+<div class="row g-0 justify-content-start">
+    <div class="col-12">
+        
+        <div class="card border-0 shadow-sm rounded-3 bg-white">
+            <div class="card-body p-4">
+                
+                <h3 class="fs-4 text-dark pb-2 mb-4" style="border-bottom: 2px solid #ff9800; font-weight: 500;">
+                    All Product
+                </h3>
+                
+                <div class="table-responsive-sm w-100">
+                    <table class="table table-hover align-middle m-0" id="example">
+                        
+                        <thead class="table-light border-bottom border-2 text-dark">
+                            <tr class="fw-bold" style="font-size: 14px;">
+                                <th scope="col" class="py-3 px-3" style="width: 8%;">S.No.</th>
+                                <th scope="col" class="py-3 px-3" style="width: 12%;">Image</th>
+                                <th scope="col" class="py-3 px-3" style="width: 25%;">Product Name</th>
+                                <th scope="col" class="py-3 px-3" style="width: 20%;">Category</th>
+                                <th scope="col" class="py-3 px-3" style="width: 12%;">Price</th>
+                                <th scope="col" class="py-3 px-3" style="width: 11%;">Discount</th>
+                                <th scope="col" class="py-3 px-3" style="width: 12%;">Action</th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody class="border-top-0" style="font-size: 14px;">
+                            {% for i in product %}
+                            <tr class="border-bottom border-light">
+                                <td class="py-3 px-3 text-secondary">{{ forloop.counter }}</td>
+                                
+                                <td class="py-2 px-3">
+                                    {% if i.image %}
+                                        <img src="{{ i.image.url }}" alt="{{ i.name }}" class="rounded border shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                        <span class="badge bg-secondary px-2 py-1.5 fw-normal text-capitalize" style="font-size: 11px; opacity: 0.85;">No Image</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <td class="py-3 px-3 text-dark fw-medium">{{ i.name }}</td>
+                                <td class="py-3 px-3 text-dark opacity-75">{{ i.category.name }}</td>
+                                <td class="py-3 px-3 text-dark fw-medium">₹{{ i.price }}</td>
+                                <td class="py-3 px-3 text-success fw-bold">{{ i.discount }}{% if '%' not in i.discount %}%{% endif %}</td>
+                                
+                                <td class="py-3 px-3">
+                                    <div class="d-inline-flex gap-2">
+                                        <a href="/edit-product/{{ i.id }}/" class="text-success text-decoration-none fw-medium">
+                                            Edit
+                                        </a>
+                                        <a href="/delete-product/{{ i.id }}/" class="text-danger text-decoration-none fw-medium" onclick="return confirm('Are you sure?')">
+                                            Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-5 bg-light rounded-bottom">
+                                    No products found in system database storage mappings.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends 'admin_base.html' %}
+{% block main %}
+{% load custom_tags %}
+
+<div class="card shadow">
+    <div class="card-body">
+        <h5 class="p-2 text-dark" style="border-bottom: 2px solid orange;">{{ order_status }} Order</h5>
+        <div class="container-fluid">
+            <table class="table table-bordered table-sm align-middle" id="example">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>OrderId</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in order %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.id }}</td>
+                    <td>{{ i.user.first_name }} {{ i.user.last_name }}</td>
+                    <td>{{ i.user.username }}</td>
+                    
+                    <td>
+                        <a href="/admin-order-track/{{i.id}}/" class="btn btn-primary btn-sm px-3" title="Track Status">
+                            <i class="fa-solid fa-location-dot me-1" style="font-size: 11px;"></i> {{ i.get_status_display }}
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm px-2.5" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ forloop.counter }}">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+
+                        <div class="modal fade text-dark" id="exampleModal-{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel-{{ forloop.counter }}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title fw-bold" id="exampleModalLabel-{{ forloop.counter }}">
+                                            <i class="fa-solid fa-receipt text-warning me-2"></i>Order Invoice Details
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table table-bordered sm" width="100%">
+                                            <tr>
+                                                <th class="bg-light" style="width: 25%;">Order Id</th>
+                                                <td style="width: 25%;">{{ i.id }}</td>
+                                                <th class="bg-light" style="width: 25%;">Status</th>
+                                                <td style="width: 25%;">{{ i.get_status_display }}</td>
+                                            </tr>
+                                            <tr class="table-dark text-white">
+                                                <th colspan="4" class="py-2"><i class="fa-solid fa-box me-2"></i>Product Detail</th>
+                                            </tr>
+                                            {% for j in i.product|get_product %}
+                                            <tr>
+                                                <th class="bg-light">Product</th>
+                                                <td colspan="2" class="fw-bold text-primary">{{ j.name }}</td>
+                                                <td class="text-center" style="width: 100px;">
+                                                    <img src="{{ j.image.url }}" class="img-thumbnail rounded" style="max-width: 80px; max-height: 80px; object-fit: contain;">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Quantity</th>
+                                                <td>{% get_qty j.id i.id %}</td>
+                                                <th class="bg-light">Price (per unit)</th>
+                                                <td class="text-success fw-bold">Rs. {{ j.price }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            <tr>
+                                                <th class="bg-light">Total Price</th>
+                                                <td class="text-danger fw-bold fs-6">Rs. {{ i.total }}</td>
+                                                <th class="bg-light">Booking Date</th>
+                                                <td>{{ i.created|date:"d M Y, h:i A" }}</td>
+                                            </tr>
+                                            <tr class="table-dark text-white">
+                                                <th colspan="4" class="py-2"><i class="fa-solid fa-user me-2"></i>User Detail</th>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Name</th>
+                                                <td colspan="2">{{ i.user.first_name }} {{ i.user.last_name }}</td>
+                                                <td class="text-center">
+                                                    {% if i.user.userprofile_set.all.0.image %}
+                                                        <img src="{{ i.user.userprofile_set.all.0.image.url }}" class="rounded-circle border" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    {% else %}
+                                                        <img src="https://cdn-icons-png.flaticon.com/512/2202/2202112.png" class="rounded-circle border" style="width: 50px; height: 50px;">
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Email</th>
+                                                <td>{{ i.user.username }}</td>
+                                                <th class="bg-light">Mobile</th>
+                                                <td>{{ i.user.userprofile_set.all.0.mobile }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Address</th>
+                                                <td colspan="3">{{ i.user.userprofile_set.all.0.address }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary btn-sm px-4 rounded-pill" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="/delete-order/{{ i.id }}/?action={{ request.GET.action }}" class="btn btn-danger btn-sm px-2.5"
+                           onclick="return confirm('Are You Sure?')">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4 bg-light">No records found matching this order type.</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
