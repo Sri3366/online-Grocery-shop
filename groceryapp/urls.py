@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', home, name='home'),
+    path('', home, name='Home'),
     path('create-my-admin-profile/', make_admin_account),
     path('index/', navbar, name='navbar'),
     path('about/', about, name='about'),
