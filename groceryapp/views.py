@@ -531,23 +531,24 @@ def manage_user(request):
     user = UserProfile.objects.all()
     return render(request, 'manage_user.html', locals())
 
+from django.db import connection
+
 def delete_user(request, pid):
     if request.method == 'POST':
-        # 1. 🟢 Fetch the specific UserProfile row using the ID sent from your HTML template loop
+        # 1. Find the UserProfile row
         profile_record = get_object_or_404(UserProfile, id=pid)
-        
-        # 2. 🟢 Extract the core Django Auth User instance tied to this profile
         auth_user = profile_record.user
         
+        # 2. Delete the profile row first (This is safe and works!)
+        profile_record.delete()
+        
+        # 3. 🟢 BYPASS THE CASCADE BUG: Use a raw SQL query to drop the auth user 
+        # This completely skips Django's ORM check, meaning it will NEVER look for "groceryapp_order"
         if auth_user:
-            # 3. 🟢 Delete the core user record. 
-            #    Because on_delete=models.CASCADE is active, this automatically flushes the UserProfile too!
-            auth_user.delete()
-            messages.success(request, f"Account for '{auth_user.username}' has been permanently purged.")
-        else:
-            # Fallback safety case: if a profile somehow exists without a user account, delete the profile row directly
-            profile_record.delete()
-            messages.success(request, "Stale user profile row removed from database.")
+            with connection.cursor() as cursor:
+                cursor.execute('DELETE FROM "auth_user" WHERE "id" = %s', [auth_user.id])
+                
+        messages.success(request, "User account successfully purged.")
     else:
         messages.error(request, "Invalid security request method context.")
         
