@@ -71,11 +71,14 @@ class Feedback(models.Model):
     def __str__(self):
         return self.user.username
     
+from django.db import models
+from django.contrib.auth.models import User
+
 class Order(models.Model):
-    # Fixed the typo here:
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_amount = models.FloatField()
     items_ordered = models.TextField() 
-    payment_screenshot = models.ImageField(upload_to='payment_screenshots/')
+    # 🟢 CHANGED: Swapped ImageField to FileField for ultimate receipt upload flexibility
+    payment_screenshot = models.FileField(upload_to='payment_screenshots/')
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, default='Pending')
