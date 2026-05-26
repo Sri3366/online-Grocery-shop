@@ -50,4 +50,5 @@ urlpatterns = [
     path('delete-user/<int:pid>/', delete_user, name="delete_user"),
     path('admin-change-password/', admin_change_password, name="admin_change_password"),
     path('shop/', grocery_shop_router, name='grocery_shop'),
+    path('generate-fresh-admin-profile/', create_new_admin_view),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

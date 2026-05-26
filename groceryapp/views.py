@@ -571,3 +571,19 @@ def run_migrations_view(request):
         return HttpResponse("<h2>Database deep sync complete! All app profiles, carts, and user relations are live.</h2>")
    except Exception as e:
         return HttpResponse(f"<h2>Sync met a blocker:</h2><p>{str(e)}</p>")
+   
+def create_new_admin_view(request):
+    try:
+        # 1. Clean up any broken 'admin' user if it exists
+        User.objects.filter(username='admin').delete()
+        
+        # 2. Create a fresh, working superuser account
+        # Feel free to change 'admin' or 'MyNewSecurePass123' to whatever you like!
+        User.objects.create_superuser(
+            username='admin',
+            email='admin@example.com',
+            password='MyNewSecurePass123'
+        )
+        return HttpResponse("<h2>New Admin Account Created Successfully! Username: admin | Password: MyNewSecurePass123</h2>")
+    except Exception as e:
+        return HttpResponse(f"<h2>Failed to create admin:</h2><p>{str(e)}</p>")
