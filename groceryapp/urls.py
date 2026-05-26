@@ -4,10 +4,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', home, name='Home'),
+    path('', home, name='home'),
     path('create-my-admin-profile/', make_admin_account),
     path('force-database-sync/', run_migrations_view, name='force_migrations'),
-    
+
     path('index/', navbar, name='navbar'),
     path('about/', about, name='about'),
     path('contact/', contact, name='contact'),
