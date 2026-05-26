@@ -25,7 +25,7 @@ def home(request):
     }
     
     # 3. Render your premium file with the database context attached
-    return render(request, 'Home.html', context)
+    return render(request,'home.html', context)
 
 def navbar(request):
     return render(request,'navigation.html')
