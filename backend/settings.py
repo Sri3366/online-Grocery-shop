@@ -97,7 +97,8 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # 🟢 FIX: Replaced Manifest storage to prevent collectstatic from crashing on missing third-party admin translation files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# 🟢 FORCE: Use the standard Django storage backend so WhiteNoise never looks for or compresses missing files
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
