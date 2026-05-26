@@ -13,14 +13,14 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
-    'cloudinary_storage',
+    'cloudinary_storage',          # 🟢 Kept above staticfiles for correct override resolution
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cloudinary',
+    'cloudinary',                  # 🟢 Enabled for your background API wrappers
     'groceryapp',
 ]
 
@@ -59,16 +59,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database Integration
-# 1. Grab the live Render PostgreSQL environment variable
 DATABASE_URL = config('DATABASE_URL', default=None)
 
 if DATABASE_URL:
-    # 🟢 If we are on Render, force it to use PostgreSQL connection string
+    # 🟢 Live Render PostgreSQL configuration
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
 else:
-    # 💻 If we are running locally on your computer, use your local SQLite
+    # 💻 Local fallback Development SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -96,10 +95,15 @@ STATICFILES_DIRS = [
     BASE_DIR / "groceryapp" / "static",
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# 🟢 FIX: Replaced Manifest storage to prevent collectstatic from crashing on missing third-party admin translation files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Media Cloud Storage Integration (User uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# 🟢 Redirects all production file uploads automatically to Cloudinary
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
