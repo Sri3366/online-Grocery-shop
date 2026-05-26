@@ -533,9 +533,24 @@ def manage_user(request):
 
 def delete_user(request, pid):
     if request.method == 'POST':
-        user_record = get_object_or_404(User, id=pid)
-        user_record.delete()
-        messages.success(request, "User account successfully purged.")
+        # 1. 🟢 Fetch the specific UserProfile row using the ID sent from your HTML template loop
+        profile_record = get_object_or_404(UserProfile, id=pid)
+        
+        # 2. 🟢 Extract the core Django Auth User instance tied to this profile
+        auth_user = profile_record.user
+        
+        if auth_user:
+            # 3. 🟢 Delete the core user record. 
+            #    Because on_delete=models.CASCADE is active, this automatically flushes the UserProfile too!
+            auth_user.delete()
+            messages.success(request, f"Account for '{auth_user.username}' has been permanently purged.")
+        else:
+            # Fallback safety case: if a profile somehow exists without a user account, delete the profile row directly
+            profile_record.delete()
+            messages.success(request, "Stale user profile row removed from database.")
+    else:
+        messages.error(request, "Invalid security request method context.")
+        
     return redirect('admin_dashboard')
 
 def admin_change_password(request):
