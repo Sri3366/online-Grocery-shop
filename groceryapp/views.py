@@ -1,4 +1,6 @@
 import json
+import urllib.parse
+from django.contrib.auth.decorators import login_required
 from django.core.management import call_command
 from django.http import HttpResponse
 from django.shortcuts import redirect, render,get_object_or_404
@@ -450,32 +452,49 @@ def delete_feedback(request, pid):
     messages.success(request, "Deleted successfully")
     return redirect('manage_feedback')
 
-def payment(request):
-    # 1. Capture pricing metrics passed from the booking page URL parameters (GET)
-    total = request.GET.get('total')
-    discounted = request.GET.get('discounted')
+@login_required
+def payment_view(request):
+    # Fetch price parameters from the URL
+    total_price = request.GET.get('discounted', '0.00')
     
-    cart = Cart.objects.get(user=request.user)
-    
-    if request.method == "POST":
-        # 2. Grab the true final payable total directly from the payment form input
-        final_payable = request.POST.get('amount') or discounted or total
+    if request.method == "POST" and request.FILES.get('screenshot'):
+        screenshot_file = request.FILES['screenshot']
         
-        # 3. Create the booking entry using the final discounted value
-        book = Booking.objects.create(
-            user=request.user, 
-            product=cart.product, 
-            total=final_payable
+        # 1. Setup sample items text string (Customize based on your cart data collection)
+        # For example: "2kg Dry Fruits, 1kg Sugar"
+        items_summary = "Fresh Groceries / Dry Fruits Selection" 
+        
+        # 2. Save order entry to PostgreSQL
+        order = Order.objects.create(
+            user=request.user,
+            total_amount=float(total_price),
+            items_ordered=items_summary,
+            payment_screenshot=screenshot_file
         )
         
-        # 4. Flush out the cart data matrix completely
-        cart.product = {'objects': []}
-        cart.save()
+        # 3. CONSTRUCT THE WHATSAPP MESSAGE TEXT
+        # You can adjust your business phone number and the delivery hours notice right here!
+        your_whatsapp_number = "917993910966" # 🟢 Put your real WhatsApp number here (with 91 country code, no spaces)
+        delivery_timeframe = "1 hour"    # 🟢 Set your expected delivery speed estimate
         
-        messages.success(request, "Booked Order Successfully!")
-        return redirect('myorder')
+        raw_message = (
+            f"Hello Lakshmi Durga Traders! 👋\n\n"
+            f"I have successfully placed an order.\n"
+            f"*Order ID:* #{order.id}\n"
+            f"*Items:* {items_summary}\n"
+            f"*Total Paid:* Rs.{total_price}\n\n"
+            f"✅ I have attached my payment screenshot in the app. "
+            f"Please deliver it within *{delivery_timeframe}*."
+        )
         
-    return render(request, 'payment.html', locals())
+        # Safely encode spaces and emojis for web browser address bars
+        encoded_message = urllib.parse.quote(raw_message)
+        whatsapp_url = f"https://api.whatsapp.com/send?phone={your_whatsapp_number}&text={encoded_message}"
+        
+        # 💥 AUTOMATIC REDIRECT: Shoots the user straight to WhatsApp!
+        return redirect(whatsapp_url)
+        
+    return render(request, 'payment.html')
 
 def read_feedback(request, pid):
     feedback = Feedback.objects.get(id=pid)
