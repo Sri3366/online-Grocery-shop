@@ -1,5 +1,5 @@
 import json
-
+from django.core.management import call_command
 from django.http import HttpResponse
 from django.shortcuts import redirect, render,get_object_or_404
 from .models import ORDERSTATUS, Carousel,Category, Feedback,Product,User,UserProfile,Cart,Booking
@@ -555,4 +555,14 @@ def grocery_shop_router(request):
             'carousel': carousel_data
         }
         return render(request, 'index.html', context)
+    
 
+from django.http import HttpResponse
+
+def run_migrations_view(request):
+    try:
+        # This manually forces Django to push your models to PostgreSQL
+        call_command('migrate', interactive=False)
+        return HttpResponse("<h2>Database migrations completed successfully! Custom tables are now live.</h2>")
+    except Exception as e:
+        return HttpResponse(f"<h2>Migration failed:</h2><p>{str(e)}</p>")
