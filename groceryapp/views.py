@@ -535,30 +535,20 @@ from django.db import connection
 
 def delete_user(request, pid):
     if request.method == 'POST':
-        # 1. Fetch the specific UserProfile row
+        # 1. Find the UserProfile row
         profile_record = get_object_or_404(UserProfile, id=pid)
         auth_user = profile_record.user
         
-        # 2. Delete the profile row first
+        # 2. Delete the profile row first (This is safe and works!)
         profile_record.delete()
         
-        # 3. Clean out all other tables referencing this auth_user ID manually
+        # 3. 🟢 BYPASS THE CASCADE BUG: Use a raw SQL query to drop the auth user 
+        # This completely skips Django's ORM check, meaning it will NEVER look for "groceryapp_order"
         if auth_user:
-            user_id = auth_user.id
             with connection.cursor() as cursor:
-                # 🟢 Step A: Clear out the shopping carts linked to this user ID
-                cursor.execute('DELETE FROM "groceryapp_cart" WHERE "user_id" = %s', [user_id])
+                cursor.execute('DELETE FROM "auth_user" WHERE "id" = %s', [auth_user.id])
                 
-                # 🟢 Step B: Clear out any feedback entries linked to this user ID
-                cursor.execute('DELETE FROM "groceryapp_feedback" WHERE "user_id" = %s', [user_id])
-                
-                # 🟢 Step C: Clear out any active bookings entries linked to this user ID
-                cursor.execute('DELETE FROM "groceryapp_booking" WHERE "user_id" = %s', [user_id])
-                
-                # 🟢 Step D: Now that everything pointing to them is gone, delete the actual user!
-                cursor.execute('DELETE FROM "auth_user" WHERE "id" = %s', [user_id])
-                
-        messages.success(request, "User account and all related data successfully purged.")
+        messages.success(request, "User account successfully purged.")
     else:
         messages.error(request, "Invalid security request method context.")
         
