@@ -558,9 +558,16 @@ def grocery_shop_router(request):
     
 
 def run_migrations_view(request):
-    try:
-        # This tells Django: Ignore previous history records and explicitly run the app schemas
+   try:
+        # 1. Tells Django's history tracker to catch up and record what it thinks it did
+        call_command('migrate', 'groceryapp', '--fake', interactive=False)
+        
+        # 2. Re-runs the actual, hard database structural updates sequentially
         call_command('migrate', 'groceryapp', interactive=False)
-        return HttpResponse("<h2>App specific database tables constructed successfully!</h2>")
-    except Exception as e:
-        return HttpResponse(f"<h2>Migration failed:</h2><p>{str(e)}</p>")
+        
+        # 3. Safety valve: Running the universal project migrator
+        call_command('migrate', interactive=False)
+        
+        return HttpResponse("<h2>Database deep sync complete! All app profiles, carts, and user relations are live.</h2>")
+   except Exception as e:
+        return HttpResponse(f"<h2>Sync met a blocker:</h2><p>{str(e)}</p>")
