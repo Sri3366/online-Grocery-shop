@@ -96,7 +96,7 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# 🟢 FIX: Replaced Manifest storage to prevent collectstatic from crashing on missing third-party admin translation files
+
 # 🟢 FORCE: Use the standard Django storage backend so WhiteNoise never looks for or compresses missing files
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
@@ -108,3 +108,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # 🟢 Redirects all production file uploads automatically to Cloudinary
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# 🟢 ADD THIS BLOCK RIGHT HERE TO FORCE API KEY RECOGNITION
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUD_NAME', default='druovjqt7'),
+    'API_KEY': config('CLOUDINARY_API_KEY', default='837444446665171'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+}
