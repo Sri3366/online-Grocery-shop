@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.management import call_command
 from django.http import HttpResponse
 from django.shortcuts import redirect, render,get_object_or_404
-from .models import ORDERSTATUS, Carousel,Category, Feedback,Product,User,UserProfile,Cart,Booking
+from .models import ORDERSTATUS, Carousel,Category, Feedback, Order,Product,User,UserProfile,Cart,Booking
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from django.contrib import messages
 
@@ -453,7 +453,7 @@ def delete_feedback(request, pid):
     return redirect('manage_feedback')
 
 @login_required
-def payment_view(request):
+def payment(request):
     # Fetch price parameters from the URL
     total_price = request.GET.get('discounted', '0.00')
     
