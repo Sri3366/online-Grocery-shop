@@ -7,6 +7,14 @@ from django.contrib.auth import authenticate,login,logout,update_session_auth_ha
 from django.contrib import messages
 
 # Create your views here.
+# A simple view function to create your user securely on the cloud database
+def make_admin_account(request):
+    # Change 'admin' and 'SecurePassword123' to whatever you want your login to be!
+    if not User.objects.filter(username='admin').exists():
+        User.objects.create_superuser('admin', 'admin@example.com', 'SecurePassword123')
+        return HttpResponse("<h3>Superuser created successfully! You can log in now.</h3>")
+    return HttpResponse("<h3>Account already exists.</h3>")
+
 def home(request):
     # 1. Fetch your live admin products (limiting to 4 or 8 to fit the clean row grid)
     all_shop_products = Product.objects.all()[:4] 
