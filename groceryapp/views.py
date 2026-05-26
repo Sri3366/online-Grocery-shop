@@ -532,10 +532,11 @@ def manage_user(request):
     return render(request, 'manage_user.html', locals())
 
 def delete_user(request, pid):
-    user = User.objects.get(id=pid)
-    user.delete()
-    messages.success(request, "User deleted successfully")
-    return redirect('manage_user') 
+    if request.method == 'POST':
+        user_record = get_object_or_404(User, id=pid)
+        user_record.delete()
+        messages.success(request, "User account successfully purged.")
+    return redirect('admin_dashboard')
 
 def admin_change_password(request):
     if request.method == 'POST':

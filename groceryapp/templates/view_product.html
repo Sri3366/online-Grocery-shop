@@ -45,13 +45,17 @@
                                 <td class="py-3 px-3 text-success fw-bold">{{ i.discount }}{% if '%' not in i.discount %}%{% endif %}</td>
                                 
                                 <td class="py-3 px-3">
-                                    <div class="d-inline-flex gap-2">
+                                    <div class="d-inline-flex align-items-center gap-2">
                                         <a href="/edit-product/{{ i.id }}/" class="text-success text-decoration-none fw-medium">
                                             Edit
                                         </a>
-                                        <a href="/delete-product/{{ i.id }}/" class="text-danger text-decoration-none fw-medium" onclick="return confirm('Are you sure?')">
-                                            Delete
-                                        </a>
+                                        
+                                        <form action="/delete-product/{{ i.id }}/" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-danger text-decoration-none fw-medium bg-transparent border-0 p-0" style="cursor: pointer; font-size: 14px;">
+                                                Delete
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
