@@ -557,12 +557,10 @@ def grocery_shop_router(request):
         return render(request, 'index.html', context)
     
 
-from django.http import HttpResponse
-
 def run_migrations_view(request):
     try:
-        # This manually forces Django to push your models to PostgreSQL
-        call_command('migrate', interactive=False)
-        return HttpResponse("<h2>Database migrations completed successfully! Custom tables are now live.</h2>")
+        # This tells Django: Ignore previous history records and explicitly run the app schemas
+        call_command('migrate', 'groceryapp', interactive=False)
+        return HttpResponse("<h2>App specific database tables constructed successfully!</h2>")
     except Exception as e:
         return HttpResponse(f"<h2>Migration failed:</h2><p>{str(e)}</p>")
