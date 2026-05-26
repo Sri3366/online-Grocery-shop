@@ -574,16 +574,22 @@ def run_migrations_view(request):
    
 def create_new_admin_view(request):
     try:
-        # 1. Clean up any broken 'admin' user if it exists
-        User.objects.filter(username='admin').delete()
+        # 💥 THE TOTAL PURGE: Delete absolutely EVERY user in the database
+        User.objects.all().delete()
         
-        # 2. Create a fresh, working superuser account
-        # Feel free to change 'admin' or 'MyNewSecurePass123' to whatever you like!
-        User.objects.create_superuser(
-            username='venkat',
-            email='admin@example.com',
-            password='Venkatv@3'
+        # 🟢 Create your fresh, clean superuser profile
+        # Change 'srivenkat' and 'YourSecretPassword123' to whatever you want to keep!
+        user = User.objects.create_superuser(
+            username='teju',
+            email='teju@example.com',
+            password='teju@123'
         )
-        return HttpResponse("<h2>New Admin Account Created Successfully! Username: admin | Password: MyNewSecurePass123</h2>")
+        
+        # Force log your session in immediately
+        login(request, user)
+        
+        # Take you straight past the login page and into your dashboard!
+        return redirect('/admin-login/')
+        
     except Exception as e:
-        return HttpResponse(f"<h2>Failed to create admin:</h2><p>{str(e)}</p>")
+        return HttpResponse(f"<h2>Failed to reset user database:</h2><p>{str(e)}</p>")
