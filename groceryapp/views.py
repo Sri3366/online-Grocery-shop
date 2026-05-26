@@ -580,9 +580,9 @@ def create_new_admin_view(request):
         # 2. Create a fresh, working superuser account
         # Feel free to change 'admin' or 'MyNewSecurePass123' to whatever you like!
         User.objects.create_superuser(
-            username='admin',
+            username='venkat',
             email='admin@example.com',
-            password='MyNewSecurePass123'
+            password='Venkatv@3'
         )
         return HttpResponse("<h2>New Admin Account Created Successfully! Username: admin | Password: MyNewSecurePass123</h2>")
     except Exception as e:
