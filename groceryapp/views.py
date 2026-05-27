@@ -460,7 +460,7 @@ def payment(request):
         except Exception:
             pass
 
-    # 🟢 FIXED: Safely fetch ALL tracking parameters passed from your booking view URL string
+    # Safely fetch all tracking parameters passed from your booking view URL string
     raw_total = request.GET.get('total', '0.00')
     discounted_price = request.GET.get('discounted', '0.00')
     deduction_savings = request.GET.get('deduction', '0.00')
@@ -469,12 +469,10 @@ def payment(request):
         screenshot_file = request.FILES['screenshot']
         items_summary = "Fresh Groceries / Dry Fruits Selection" 
         
-        # 🟢 FIXED: All model fields are explicitly filled so 'NOT NULL' constraints never fail
+        # 🟢 FIXED: Removed unexpected keyword fields from Django's initialization block
         order = Order.objects.create(
             user=request.user,
-            total_amount=float(raw_total),
-            discounted_amount=float(discounted_price),
-            deduction_amount=float(deduction_savings),
+            total_amount=float(discounted_price), # Saves the final payable cash amount to total_amount
             items_ordered=items_summary,
             status='Pending',
             payment_screenshot=screenshot_file
@@ -489,7 +487,9 @@ def payment(request):
             f"I have successfully placed an order.\n"
             f"*Order ID:* #{order.id}\n"
             f"*Items:* {items_summary}\n"
-            f"*Total Paid:* Rs.{discounted_price}\n\n"
+            f"*Total Bill Amount:* Rs.{raw_total}\n"
+            f"*Discount Applied:* Rs.{deduction_savings}\n"
+            f"*Total Paid Amount:* Rs.{discounted_price}\n\n"
             f"✅ I have attached my payment screenshot in the app. "
             f"Please deliver it within *{delivery_timeframe}*."
         )
