@@ -418,15 +418,15 @@ def payment(request):
         screenshot_file = request.FILES['screenshot']
         items_summary = "Fresh Groceries / Dry Fruits Selection" 
         
-        # 1. Save directly to Booking table with real price to fix "Rs. None"
-        # Match 'price' field name with your explicit Booking model property!
+        # 🟢 THE FIX: Change 'price' below to match the exact field name in your Booking model!
+        # Examples: total_price=float(total_price), price=float(total_price), or amount=float(total_price)
         booking_order = Booking.objects.create(
             user=request.user,
-            status=1,
-            # price=float(total_price) 
+            status=1,  # 1 = New Order / Pending
+            price=float(total_price) # 👈 Change 'price' to your model's field name!
         )
         
-        # 2. Save your Order log backup
+        # Save backup log row safely
         try:
             Order.objects.create(
                 user=request.user,
@@ -438,7 +438,7 @@ def payment(request):
         except Exception:
             pass
 
-        # 3. Clear the user's cart records completely
+        # Clear the user's cart records completely
         try:
             cart_to_clear = Cart.objects.get(user=request.user)
             cart_to_clear.product = '{"objects": []}'
@@ -446,7 +446,7 @@ def payment(request):
         except Cart.DoesNotExist:
             pass
         
-        # 4. Construct the silent WhatsApp URL link
+        # Construct the hidden WhatsApp API string layout
         your_whatsapp_number = "917993910966"
         delivery_timeframe = "1 hour"
         
@@ -462,16 +462,13 @@ def payment(request):
         )
         encoded_message = urllib.parse.quote(raw_message)
         whatsapp_url = f"https://api.whatsapp.com/send?phone={your_whatsapp_number}&text={encoded_message}"
-        trigger_whatsapp = True
         
-        # Pass variables directly to the template loader instead of redirecting yet
+        # Pass variables to payment.html to let the hidden iframe process everything silently
         return render(request, 'payment.html', {
-            'trigger_whatsapp': trigger_whatsapp,
+            'trigger_whatsapp': True,
             'whatsapp_url': whatsapp_url,
             'success_redirect': True
         })
-        
-    return render(request, 'payment.html', {'trigger_whatsapp': False})
 
 def user_order_track(request, pid):
     order = Booking.objects.get(id=pid)
