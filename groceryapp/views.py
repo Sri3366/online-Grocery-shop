@@ -399,6 +399,10 @@ def booking(request):
     return render(request, "booking.html", locals())
  
 
+def myOrder(request):
+    order = Booking.objects.filter(user=request.user)
+    return render(request, "my-order.html", locals())
+
 @login_required
 def payment(request):
     # Fetch tracking parameters passed from the URL
@@ -468,7 +472,6 @@ def payment(request):
         })
         
     return render(request, 'payment.html', {'trigger_whatsapp': False})
-
 
 def user_order_track(request, pid):
     order = Booking.objects.get(id=pid)
