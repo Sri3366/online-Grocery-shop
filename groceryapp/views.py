@@ -447,17 +447,22 @@ def payment(request):
                 discounted_amount NUMERIC(10, 2) NOT NULL,
                 deduction_amount NUMERIC(10, 2) NOT NULL,
                 items_ordered TEXT NULL,
+                status VARCHAR(50) NOT NULL DEFAULT 'Pending',
                 payment_screenshot VARCHAR(100) NULL,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                 user_id INTEGER NOT NULL
             );
         """)
         
-        # 🟢 DATABASE INSURANCE: Force-inject the column if the table already existed without it
         try:
             cursor.execute('ALTER TABLE groceryapp_order ADD COLUMN items_ordered TEXT;')
         except:
-            pass # Skips silently if the column already exists, preventing a crash
+            pass
+            
+        try:
+            cursor.execute("ALTER TABLE groceryapp_order ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'Pending';")
+        except:
+            pass
 
     # Fetch price parameters from the URL
     total_price = request.GET.get('discounted', '0.00')
