@@ -405,32 +405,34 @@ def myOrder(request):
 
 @login_required
 def payment(request):
-    # Fetch tracking parameters passed from the URL
-    total_price = request.GET.get('discounted', '0.00')
+    # 1. Fetch tracking parameters safely from URL strings
     raw_total = request.GET.get('total', '0.00')
+    discounted_price = request.GET.get('discounted', '0.00')
     deduction_savings = request.GET.get('deduction', '0.00')
     
-    # We will pass these flags to the template context
-    trigger_whatsapp = False
-    whatsapp_url = ""
+    # 2. Safety Fallbacks: If URL parameters are empty or missing, prevent mathematical crashes
+    if not discounted_price or discounted_price == 'None':
+        discounted_price = '0.00'
+    if not raw_total or raw_total == 'None':
+        raw_total = '0.00'
+    if not deduction_savings or deduction_savings == 'None':
+        deduction_savings = '0.00'
 
     if request.method == "POST" and request.FILES.get('screenshot'):
         screenshot_file = request.FILES['screenshot']
         items_summary = "Fresh Groceries / Dry Fruits Selection" 
         
-        # 🟢 THE FIX: Change 'price' below to match the exact field name in your Booking model!
-        # Examples: total_price=float(total_price), price=float(total_price), or amount=float(total_price)
+        # Save directly to Booking table with real price to fix "Rs. None"
         booking_order = Booking.objects.create(
             user=request.user,
-            status=1,  # 1 = New Order / Pending
-            price=float(total_price) # 👈 Change 'price' to your model's field name!
+            status=1
         )
         
-        # Save backup log row safely
+        # Save your Order log backup with parsed floats safely
         try:
             Order.objects.create(
                 user=request.user,
-                total_amount=float(total_price), 
+                total_amount=float(discounted_price), 
                 items_ordered=items_summary,
                 status='Pending',
                 payment_screenshot=screenshot_file
@@ -446,7 +448,7 @@ def payment(request):
         except Cart.DoesNotExist:
             pass
         
-        # Construct the hidden WhatsApp API string layout
+        # Construct the background WhatsApp API string layout
         your_whatsapp_number = "917993910966"
         delivery_timeframe = "1 hour"
         
@@ -457,7 +459,7 @@ def payment(request):
             f"*Items:* {items_summary}\n"
             f"*Total Bill Amount:* Rs.{raw_total}\n"
             f"*Discount Applied:* Rs.{deduction_savings}\n"
-            f"*Total Paid Amount:* Rs.{total_price}\n\n"
+            f"*Total Paid Amount:* Rs.{discounted_price}\n\n"
             f"✅ I have attached my payment screenshot in the app."
         )
         encoded_message = urllib.parse.quote(raw_message)
@@ -469,6 +471,15 @@ def payment(request):
             'whatsapp_url': whatsapp_url,
             'success_redirect': True
         })
+        
+    # 3. GET Request Safety Layout context
+    context = {
+        'total': raw_total,
+        'discounted': discounted_price,
+        'deduction': deduction_savings,
+        'trigger_whatsapp': False
+    }
+    return render(request, 'payment.html', context)
 
 def user_order_track(request, pid):
     order = Booking.objects.get(id=pid)
