@@ -438,7 +438,7 @@ def delete_feedback(request, pid):
 
 @login_required
 def payment(request):
-    # This automatically checks for and builds the missing database table dynamically
+    # 🟢 FIXED: Added items_ordered column to the raw SQL fallback engine
     with connection.cursor() as cursor:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS groceryapp_order (
@@ -446,22 +446,29 @@ def payment(request):
                 total_amount NUMERIC(10, 2) NOT NULL,
                 discounted_amount NUMERIC(10, 2) NOT NULL,
                 deduction_amount NUMERIC(10, 2) NOT NULL,
+                items_ordered TEXT NULL,
                 payment_screenshot VARCHAR(100) NULL,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                 user_id INTEGER NOT NULL
             );
         """)
+        
+        # 🟢 DATABASE INSURANCE: Force-inject the column if the table already existed without it
+        try:
+            cursor.execute('ALTER TABLE groceryapp_order ADD COLUMN items_ordered TEXT;')
+        except:
+            pass # Skips silently if the column already exists, preventing a crash
+
     # Fetch price parameters from the URL
     total_price = request.GET.get('discounted', '0.00')
     
     if request.method == "POST" and request.FILES.get('screenshot'):
         screenshot_file = request.FILES['screenshot']
         
-        # 1. Setup sample items text string (Customize based on your cart data collection)
-        # For example: "2kg Dry Fruits, 1kg Sugar"
+        # Setup sample items text string
         items_summary = "Fresh Groceries / Dry Fruits Selection" 
         
-        # 2. Save order entry to PostgreSQL
+        # Save order entry to PostgreSQL
         order = Order.objects.create(
             user=request.user,
             total_amount=float(total_price),
@@ -469,10 +476,9 @@ def payment(request):
             payment_screenshot=screenshot_file
         )
         
-        # 3. CONSTRUCT THE WHATSAPP MESSAGE TEXT
-        # You can adjust your business phone number and the delivery hours notice right here!
-        your_whatsapp_number = "917993910966" # 🟢 Put your real WhatsApp number here (with 91 country code, no spaces)
-        delivery_timeframe = "1 hour"    # 🟢 Set your expected delivery speed estimate
+        # CONSTRUCT THE WHATSAPP MESSAGE TEXT
+        your_whatsapp_number = "917993910966" 
+        delivery_timeframe = "1 hour"    
         
         raw_message = (
             f"Hello Lakshmi Durga Traders! 👋\n\n"
@@ -484,11 +490,9 @@ def payment(request):
             f"Please deliver it within *{delivery_timeframe}*."
         )
         
-        # Safely encode spaces and emojis for web browser address bars
         encoded_message = urllib.parse.quote(raw_message)
         whatsapp_url = f"https://api.whatsapp.com/send?phone={your_whatsapp_number}&text={encoded_message}"
         
-        # 💥 AUTOMATIC REDIRECT: Shoots the user straight to WhatsApp!
         return redirect(whatsapp_url)
         
     return render(request, 'payment.html')
