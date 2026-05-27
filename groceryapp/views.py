@@ -401,20 +401,7 @@ def booking(request):
 
 @login_required
 def myOrder(request):
-    bookings = Booking.objects.filter(user=request.user).order_by('-id')
-    
-    # Map the stored checkout values to the template loop variables
-    for b in bookings:
-        try:
-            matching_order = Order.objects.filter(user=request.user).order_by('-id').first()
-            if matching_order:
-                b.dynamic_price = matching_order.total_amount
-            else:
-                b.dynamic_price = "0.00"
-        except Exception:
-            b.dynamic_price = "0.00"
-            
-    order = bookings 
+    order = Booking.objects.filter(user=request.user).order_by('-id')
     return render(request, "my-order.html", locals())
 
 
@@ -534,25 +521,31 @@ def delete_feedback(request, pid):
 
 @login_required
 def payment(request):
-    # Fetch tracking parameters passed from the URL string
+    # 1. Fetch tracking parameters safely from URL parameters
     raw_total = request.GET.get('total', '0.00')
     discounted_price = request.GET.get('discounted', '0.00')
     deduction_savings = request.GET.get('deduction', '0.00')
     
+    # 2. Prevent string math crashes or 'None' fallbacks if refreshed without parameters
+    if not discounted_price or discounted_price == 'None' or discounted_price == '':
+        discounted_price = '0.00'
+    if not raw_total or raw_total == 'None' or raw_total == '':
+        raw_total = '0.00'
+    if not deduction_savings or deduction_savings == 'None' or deduction_savings == '':
+        deduction_savings = '0.00'
+
     if request.method == "POST" and request.FILES.get('screenshot'):
         screenshot_file = request.FILES['screenshot']
         items_summary = "Fresh Groceries / Dry Fruits Selection" 
         
-        # 1. 🟢 SAVE ORDER DIRECTLY TO THE BOOKING TABLE (Fixes Admin & User Status Sync)
-        # We save it here because your admin and 'myOrder' views query the Booking model!
+        # 3. 🟢 FIXED: Saving directly to the Booking table using the exact 'total' column name!
         booking_order = Booking.objects.create(
             user=request.user,
-            status=1,  # 1 = Pending/New Order status
-            # If your Booking model stores prices, assign them here. For example:
-            # price=float(discounted_price) 
+            status=1,  # 1 = Pending / New Order
+            total=float(discounted_price) # 👈 This completely eliminates "Rs. None"!
         )
         
-        # 2. 🟢 BACKUP COMPATIBILITY ENTRY (Fixes Rs. None and keeps groceryapp_order happy)
+        # 4. Save your core Order tracking log table
         try:
             Order.objects.create(
                 user=request.user,
@@ -562,19 +555,18 @@ def payment(request):
                 payment_screenshot=screenshot_file
             )
         except Exception:
-            pass # Keeps moving safely if there's any underlying layout mismatch
+            pass
 
-        # 3. 🟢 CLEAR THE USER'S CART ENTRIES
+        # 5. Clear the user's cart records completely so it's empty when they see the homepage
         try:
             cart_to_clear = Cart.objects.get(user=request.user)
-            cart_to_clear.product = '{"objects": []}' 
+            cart_to_clear.product = '{"objects": []}'
             cart_to_clear.save()
         except Cart.DoesNotExist:
             pass
         
-        # 4. Construct the custom WhatsApp API message payload links
+        # 6. Build out the background WhatsApp API message string layout
         your_whatsapp_number = "917993910966"
-        delivery_timeframe = "1 hour"
         
         raw_message = (
             f"Hello Lakshmi Durga Traders! 👋\n\n"
@@ -584,25 +576,30 @@ def payment(request):
             f"*Total Bill Amount:* Rs.{raw_total}\n"
             f"*Discount Applied:* Rs.{deduction_savings}\n"
             f"*Total Paid Amount:* Rs.{discounted_price}\n\n"
-            f"✅ I have attached my payment screenshot in the app. "
-            f"Please deliver it within *{delivery_timeframe}*."
+            f"✅ I have attached my payment screenshot in the app."
         )
         encoded_message = urllib.parse.quote(raw_message)
         whatsapp_url = f"https://api.whatsapp.com/send?phone={your_whatsapp_number}&text={encoded_message}"
         
-        # 5. 🟢 FIXED WHATSAPP REDIRECTION (Bypasses Browser Popup Blockers)
-        # By setting window.location to WhatsApp, the message is guaranteed to load.
-        # Once they hit send on WhatsApp, they can simply press back to return home to a clean cart!
-        messages.success(request, "Order placed successfully! Forwarding to WhatsApp...")
+        # Pass context explicitly confirming successful data mutations
+        return render(request, 'payment.html', {
+            'total': raw_total,
+            'discounted': discounted_price,
+            'deduction': deduction_savings,
+            'trigger_whatsapp': True,
+            'whatsapp_url': whatsapp_url,
+            'success_redirect': True
+        })
         
-        return HttpResponse(f"""
-            <script>
-                alert("Order Placed Successfully! Opening WhatsApp to send your screenshot...");
-                window.location.href = "{whatsapp_url}";
-            </script>
-        """)
-        
-    return render(request, 'payment.html')
+    # 7. Safe fallback execution structure for regular GET page visits and refreshes
+    context = {
+        'total': raw_total,
+        'discounted': discounted_price,
+        'deduction': deduction_savings,
+        'trigger_whatsapp': False,
+        'success_redirect': False
+    }
+    return render(request, 'payment.html', context)
 
 def read_feedback(request, pid):
     feedback = Feedback.objects.get(id=pid)
