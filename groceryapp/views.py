@@ -419,9 +419,6 @@ def myOrder(request):
 
 
 
-
-
-
 @login_required
 def payment(request):
     # 1. Fetch tracking parameters safely from URL parameters
@@ -740,3 +737,14 @@ def create_new_admin_view(request):
         
     except Exception as e:
         return HttpResponse(f"<h2>Failed to reset user database:</h2><p>{str(e)}</p>")
+    
+def debug_fields(request):
+    booking_fields = [f.name for f in Booking._meta.get_fields()]
+    order_fields = [f.name for f in Order._meta.get_fields()]
+    
+    output = f"""
+    <h3>Booking Model Fields:</h3> {booking_fields}
+    <br><br>
+    <h3>Order Model Fields:</h3> {order_fields}
+    """
+    return HttpResponse(output)
