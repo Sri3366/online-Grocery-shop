@@ -438,7 +438,7 @@ def delete_feedback(request, pid):
 
 @login_required
 def payment(request):
-    # 🟢 FIXED: Added items_ordered column to the raw SQL fallback engine
+    # This block keeps your database structure synced safely
     with connection.cursor() as cursor:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS groceryapp_order (
@@ -446,58 +446,56 @@ def payment(request):
                 total_amount NUMERIC(10, 2) NOT NULL,
                 discounted_amount NUMERIC(10, 2) NOT NULL,
                 deduction_amount NUMERIC(10, 2) NOT NULL,
-                items_ordered TEXT NULL,
-                status VARCHAR(50) NOT NULL DEFAULT 'Pending',
                 payment_screenshot VARCHAR(100) NULL,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                 user_id INTEGER NOT NULL
             );
         """)
-        
         try:
-            cursor.execute('ALTER TABLE groceryapp_order ADD COLUMN items_ordered TEXT;')
-        except:
+            cursor.execute('ALTER TABLE groceryapp_order ADD COLUMN items_ordered TEXT NULL;')
+        except Exception:
             pass
-            
         try:
             cursor.execute("ALTER TABLE groceryapp_order ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'Pending';")
-        except:
+        except Exception:
             pass
 
-    # Fetch price parameters from the URL
-    total_price = request.GET.get('discounted', '0.00')
+    # 🟢 FIXED: Safely fetch ALL tracking parameters passed from your booking view URL string
+    raw_total = request.GET.get('total', '0.00')
+    discounted_price = request.GET.get('discounted', '0.00')
+    deduction_savings = request.GET.get('deduction', '0.00')
     
     if request.method == "POST" and request.FILES.get('screenshot'):
         screenshot_file = request.FILES['screenshot']
-        
-        # Setup sample items text string
         items_summary = "Fresh Groceries / Dry Fruits Selection" 
         
-        # Save order entry to PostgreSQL
+        # 🟢 FIXED: All model fields are explicitly filled so 'NOT NULL' constraints never fail
         order = Order.objects.create(
             user=request.user,
-            total_amount=float(total_price),
+            total_amount=float(raw_total),
+            discounted_amount=float(discounted_price),
+            deduction_amount=float(deduction_savings),
             items_ordered=items_summary,
+            status='Pending',
             payment_screenshot=screenshot_file
         )
         
-        # CONSTRUCT THE WHATSAPP MESSAGE TEXT
-        your_whatsapp_number = "917993910966" 
-        delivery_timeframe = "1 hour"    
+        # WhatsApp Redirection Logic
+        your_whatsapp_number = "917993910966"
+        delivery_timeframe = "1 hour"
         
         raw_message = (
             f"Hello Lakshmi Durga Traders! 👋\n\n"
             f"I have successfully placed an order.\n"
             f"*Order ID:* #{order.id}\n"
             f"*Items:* {items_summary}\n"
-            f"*Total Paid:* Rs.{total_price}\n\n"
+            f"*Total Paid:* Rs.{discounted_price}\n\n"
             f"✅ I have attached my payment screenshot in the app. "
             f"Please deliver it within *{delivery_timeframe}*."
         )
         
         encoded_message = urllib.parse.quote(raw_message)
         whatsapp_url = f"https://api.whatsapp.com/send?phone={your_whatsapp_number}&text={encoded_message}"
-        
         return redirect(whatsapp_url)
         
     return render(request, 'payment.html')
