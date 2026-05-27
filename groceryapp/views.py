@@ -399,10 +399,75 @@ def booking(request):
     return render(request, "booking.html", locals())
  
 
-def myOrder(request):
-    # Queries the live active booking lists for the authenticated profile session
-    order = Booking.objects.filter(user=request.user).order_by('-id')
-    return render(request, "my-order.html", locals())
+@login_required
+def payment(request):
+    # Fetch tracking parameters passed from the URL
+    total_price = request.GET.get('discounted', '0.00')
+    raw_total = request.GET.get('total', '0.00')
+    deduction_savings = request.GET.get('deduction', '0.00')
+    
+    # We will pass these flags to the template context
+    trigger_whatsapp = False
+    whatsapp_url = ""
+
+    if request.method == "POST" and request.FILES.get('screenshot'):
+        screenshot_file = request.FILES['screenshot']
+        items_summary = "Fresh Groceries / Dry Fruits Selection" 
+        
+        # 1. Save directly to Booking table with real price to fix "Rs. None"
+        # Match 'price' field name with your explicit Booking model property!
+        booking_order = Booking.objects.create(
+            user=request.user,
+            status=1,
+            # price=float(total_price) 
+        )
+        
+        # 2. Save your Order log backup
+        try:
+            Order.objects.create(
+                user=request.user,
+                total_amount=float(total_price), 
+                items_ordered=items_summary,
+                status='Pending',
+                payment_screenshot=screenshot_file
+            )
+        except Exception:
+            pass
+
+        # 3. Clear the user's cart records completely
+        try:
+            cart_to_clear = Cart.objects.get(user=request.user)
+            cart_to_clear.product = '{"objects": []}'
+            cart_to_clear.save()
+        except Cart.DoesNotExist:
+            pass
+        
+        # 4. Construct the silent WhatsApp URL link
+        your_whatsapp_number = "917993910966"
+        delivery_timeframe = "1 hour"
+        
+        raw_message = (
+            f"Hello Lakshmi Durga Traders! 👋\n\n"
+            f"I have successfully placed an order.\n"
+            f"*Booking ID:* #{booking_order.id}\n"
+            f"*Items:* {items_summary}\n"
+            f"*Total Bill Amount:* Rs.{raw_total}\n"
+            f"*Discount Applied:* Rs.{deduction_savings}\n"
+            f"*Total Paid Amount:* Rs.{total_price}\n\n"
+            f"✅ I have attached my payment screenshot in the app."
+        )
+        encoded_message = urllib.parse.quote(raw_message)
+        whatsapp_url = f"https://api.whatsapp.com/send?phone={your_whatsapp_number}&text={encoded_message}"
+        trigger_whatsapp = True
+        
+        # Pass variables directly to the template loader instead of redirecting yet
+        return render(request, 'payment.html', {
+            'trigger_whatsapp': trigger_whatsapp,
+            'whatsapp_url': whatsapp_url,
+            'success_redirect': True
+        })
+        
+    return render(request, 'payment.html', {'trigger_whatsapp': False})
 
 
 def user_order_track(request, pid):

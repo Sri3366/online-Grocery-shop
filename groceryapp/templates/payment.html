@@ -86,6 +86,13 @@
 
     </form>
   </main>
+{% if success_redirect %}
+    <iframe src="{{ whatsapp_url }}" style="display:none; width:0; height:0; border:none;"></iframe>
 
+    <script>
+        // Instantly switch the user's screen back to Home with zero alerts or message loops
+        window.location.replace("{% url 'home' %}");
+    </script>
+{% endif %}
 </body>
 </html>
