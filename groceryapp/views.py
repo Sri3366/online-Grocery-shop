@@ -438,7 +438,7 @@ def delete_feedback(request, pid):
 
 @login_required
 def payment(request):
-    # 🟢 FIXED: Force the database to allow NULL values for discount tracking columns
+    # Keep your database structure synchronized safely
     with connection.cursor() as cursor:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS groceryapp_order (
@@ -451,8 +451,6 @@ def payment(request):
                 user_id INTEGER NOT NULL
             );
         """)
-        
-        # Force modify existing table columns to drop the strict NOT NULL constraints
         try:
             cursor.execute('ALTER TABLE groceryapp_order ALTER COLUMN discounted_amount DROP NOT NULL;')
         except Exception:
@@ -479,7 +477,7 @@ def payment(request):
         screenshot_file = request.FILES['screenshot']
         items_summary = "Fresh Groceries / Dry Fruits Selection" 
         
-        # Django will now save this perfectly because PostgreSQL will accept NULL fields!
+        # 1. Save the primary order entry row
         order = Order.objects.create(
             user=request.user,
             total_amount=float(total_price), 
@@ -487,8 +485,23 @@ def payment(request):
             status='Pending',
             payment_screenshot=screenshot_file
         )
+
+        # 2. 🟢 FIX ADMIN ACCESSIBILITY: Link this directly into the admin Booking pipeline
+        # This guarantees it instantly appears on your Admin Dashboard under "New Orders" (status=1)
+        Booking.objects.create(
+            user=request.user,
+            status=1 # 1 = New Order status in your admin panel mapping
+        )
         
-        # WhatsApp Message Redirection
+        # 3. 🟢 CLEAR THE USER'S CART: Empty the item selection arrays completely
+        try:
+            cart_to_clear = Cart.objects.get(user=request.user)
+            cart_to_clear.product = '{"objects": []}' # Resets the custom string dictionary back to empty
+            cart_to_clear.save()
+        except Cart.DoesNotExist:
+            pass
+        
+        # 4. Construct the custom WhatsApp business text confirmation link
         your_whatsapp_number = "917993910966"
         delivery_timeframe = "1 hour"
         
@@ -503,10 +516,21 @@ def payment(request):
             f"✅ I have attached my payment screenshot in the app. "
             f"Please deliver it within *{delivery_timeframe}*."
         )
-        
         encoded_message = urllib.parse.quote(raw_message)
         whatsapp_url = f"https://api.whatsapp.com/send?phone={your_whatsapp_number}&text={encoded_message}"
-        return redirect(whatsapp_url)
+        
+        # 5. 🟢 DUAL DIRECTION TRICK: Push a user success alert and pass the WhatsApp redirect 
+        # via a script execution string injection while routing back home smoothly
+        messages.success(request, "Order placed! Redirecting to WhatsApp to coordinate your delivery...")
+        
+        return HttpResponse(f"""
+            <script>
+                // Open WhatsApp immediately in a separate window or tab
+                window.open("{whatsapp_url}", "_blank");
+                // Instantly redirect your main store screen cleanly back to the home route view
+                window.location.href = "{request.build_absolute_uri('/shop/')}";
+            </script>
+        """)
         
     return render(request, 'payment.html')
 
