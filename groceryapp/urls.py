@@ -11,7 +11,6 @@ urlpatterns = [
     path('index/', navbar, name='navbar'),
     path('about/', about, name='about'),
     path('contact/', contact, name='contact'),
-    path('main/', main, name='main'),
     path('admin-login/', admin_login, name='admin_login'),
     path('admin-home/', admin_home, name='admin_home'),
     path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),

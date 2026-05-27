@@ -6,23 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Checkout | Lakshmi Durga Traders</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="{% static 'css/payment.css' %}?v=2.0"/>
+    <link rel="stylesheet" href="{% static 'css/payment.css' %}?v=3.0"/>
 </head>
 <body>
 
+  <h1 class="brand-bg-title">Lakshmi Durga Traders</h1>
+
   <main class="glass-container">
-    
-    <section class="payment-panel">
+    <form action="" method="post" enctype="multipart/form-data" class="checkout-combined-form">
+      {% csrf_token %}
       
-      <div class="panel-header">
-        <div class="live-indicator"></div>
-        <h2 class="panel-title">Instant UPI Clearance</h2>
-      </div>
-      
-      <div class="inner-gateway-box">
-        <form action="" method="post" enctype="multipart/form-data" class="checkout-form">
-          {% csrf_token %}
-          
+      <section class="payment-panel">
+        <div class="panel-header">
+          <div class="live-indicator"></div>
+          <h2 class="panel-title">Instant UPI Clearance</h2>
+        </div>
+        
+        <div class="inner-gateway-box">
           <div class="qr-display-wrapper">
              <div class="qr-crop-box">
                 <img src="{% static 'images/qrcode.jpeg' %}" alt="PhonePe QR" class="qr-img" />
@@ -35,48 +35,56 @@
              <label class="upload-label">Submit Transfer Receipt</label>
              <input type="file" name="screenshot" accept="image/*, .pdf" required class="file-box" />
           </div>
+        </div>
+      </section>
 
-          <button type="submit" class="pay-btn">Authorize Order Placement</button>
-        </form>
-      </div>
-    </section>
+      <section class="invoice-panel">
+        <div class="invoice-top">
+          <h2 class="panel-title">Invoice Panel</h2>
+          
+          <div class="invoice-matrix-container">
+            <h3 class="matrix-heading">Order Statement</h3>
+            
+            <div class="invoice-matrix">
+              <div class="matrix-row">
+                <span>Items Subtotal:</span>
+                <span class="row-value">Rs.{{ request.GET.total|floatformat:2 }}</span>
+              </div>
+              
+              <div class="matrix-row">
+                <span>Campaign Discount:</span>
+                <span class="discount-badge">-Rs.{{ request.GET.deduction|floatformat:2 }}</span>
+              </div>
+              
+              <div class="matrix-row">
+                <span>VAT / Taxes:</span>
+                <span class="row-value">Rs.0.00</span>
+              </div>
 
-    <section class="invoice-panel">
-      
-      <div class="invoice-top">
-        <h2 class="panel-title">Order Statement</h2>
-        
-        <div class="invoice-matrix">
-          
-          <div class="matrix-row">
-            <span>Items Subtotal</span>
-            <span class="row-value">Rs.{{ request.GET.total|floatformat:2 }}</span>
-          </div>
-          
-          <div class="matrix-row">
-            <span>Campaign Discount</span>
-            <span class="discount-badge">- Rs.{{ request.GET.deduction|floatformat:2 }}</span>
-          </div>
-          
-          <div class="matrix-row">
-            <span>VAT / Taxes</span>
-            <span class="row-value">Rs.0.00</span>
-          </div>
-          
-          <div class="divider"></div>
-          
-          <div class="matrix-row total-row">
-            <span class="total-label">Amount Due</span>
-            <span class="total-value">Rs.{{ request.GET.discounted|floatformat:2 }}</span>
+              <div class="matrix-row">
+                <span>Subtotal:</span>
+                <span class="row-value">Rs.{{ request.GET.total|default:"0.00"|floatformat:2 }}</span>
+              </div>
+              
+              <div class="divider"></div>
+              
+              <div class="matrix-row total-row">
+                <span class="total-label">Amount Due:</span>
+                <span class="total-value">Rs.{{ request.GET.discounted|floatformat:2 }}</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      
-      <p class="disclaimer-text">
-        🔒 <strong>Escrow Guarantee:</strong> Scan the secure merchant code, fulfill your transfer, and supply the transaction file. Instant verification will dispatch delivery status updates immediately via automated WhatsApp logic.
-      </p>
-    </section>
+        
+        <div class="invoice-bottom-actions">
+          <p class="disclaimer-text">
+            Disclaimer, is vatam dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam modum exceilat nisl ut aliquip ex ea commodo tines consequat.
+          </p>
+          <button type="submit" class="pay-btn">Authorize Order Placement</button>
+        </div>
+      </section>
 
+    </form>
   </main>
 
 </body>

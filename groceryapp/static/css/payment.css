@@ -6,48 +6,65 @@
 }
 
 body {
+   min-height: 100vh;
    width: 100vw;
-   height: 100vh;
    background: radial-gradient(circle at top left, #1a2a6c, #275d38, #0f2027);
    font-family: 'Plus Jakarta Sans', sans-serif;
    display: flex;
+   flex-direction: column;
    justify-content: center;
    align-items: center;
-   overflow: hidden;
+   overflow-x: hidden;
+   padding: 20px;
 }
 
-/* Glassmorphism Main Board */
+/* Elegant Header Branding Label text */
+.brand-bg-title {
+   color: rgba(255, 255, 255, 0.95);
+   font-size: 2.2rem;
+   font-weight: 700;
+   margin-bottom: 25px;
+   letter-spacing: -0.5px;
+   text-align: center;
+   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Glassmorphic Main App Board */
 .glass-container {
-   background: rgba(255, 255, 255, 0.07);
-   backdrop-filter: blur(25px);
-   -webkit-backdrop-filter: blur(25px);
-   border: 1px solid rgba(255, 255, 255, 0.15);
+   background: rgba(255, 255, 255, 0.04);
+   backdrop-filter: blur(30px);
+   -webkit-backdrop-filter: blur(30px);
+   border: 1px solid rgba(255, 255, 255, 0.12);
    border-radius: 24px;
    width: 100%;
-   max-width: 1050px;
-   min-height: 560px;
-   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
-   display: flex;
-   padding: 40px;
-   gap: 35px;
+   max-width: 1100px;
+   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.45);
+   padding: 30px;
    color: #ffffff;
 }
 
-/* Global Left/Right Headers */
+/* Layout Controller Wrapper */
+.checkout-combined-form {
+   display: flex;
+   width: 100%;
+   gap: 30px;
+}
+
+/* Global Section Titles */
 .panel-title {
    font-weight: 700;
-   font-size: 1.3rem;
-   letter-spacing: -0.5px;
+   font-size: 1.35rem;
+   letter-spacing: -0.3px;
    color: #ffffff;
 }
 
-/* --- LEFT PANEL (UPI GATEWAY) --- */
+/* --- LEFT GATEWAY STAGE BLOCK --- */
 .payment-panel {
-   flex: 1.3;
-   background: rgba(15, 23, 42, 0.4);
-   border: 1px solid rgba(255, 255, 255, 0.05);
+   flex: 1.1;
+   background: rgba(15, 23, 42, 0.35);
+   border: 1px solid rgba(255, 255, 255, 0.06);
    border-radius: 20px;
-   padding: 30px;
+   padding: 25px;
    display: flex;
    flex-direction: column;
 }
@@ -56,7 +73,7 @@ body {
    display: flex;
    align-items: center;
    gap: 12px;
-   margin-bottom: 25px;
+   margin-bottom: 20px;
 }
 
 .live-indicator {
@@ -68,8 +85,8 @@ body {
 }
 
 .inner-gateway-box {
-   background: rgba(255, 255, 255, 0.02);
-   border: 1px solid rgba(255, 255, 255, 0.08);
+   background: rgba(255, 255, 255, 0.01);
+   border: 1px solid rgba(255, 255, 255, 0.06);
    border-radius: 16px;
    padding: 25px;
    display: flex;
@@ -79,14 +96,6 @@ body {
    flex-grow: 1;
 }
 
-.checkout-form {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   width: 100%;
-}
-
-/* Merchant QR Frame */
 .qr-display-wrapper {
    text-align: center;
    display: flex;
@@ -97,16 +106,12 @@ body {
 }
 
 .qr-crop-box {
-   width: 160px;
-   height: 200px;
+   width: 170px;
+   height: 170px;
    overflow: hidden;
-   border-radius: 14px;
-   border: 1px solid rgba(255, 255, 255, 0.2);
-   box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   background-color: #000;
+   border-radius: 16px;
+   border: 2px solid rgba(255, 255, 255, 0.25);
+   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
 }
 
 .qr-img {
@@ -116,37 +121,34 @@ body {
 }
 
 .merchant-badge {
-   color: #a0aec0;
-   font-size: 13px;
+   color: rgba(255, 255, 255, 0.5);
+   font-size: 12px;
    font-weight: 500;
-   margin-top: 12px;
-   letter-spacing: 0.5px;
+   margin-top: 14px;
+   letter-spacing: 0.8px;
    text-transform: uppercase;
 }
 
 .merchant-name {
    color: #ffffff;
-   font-size: 15px;
+   font-size: 16px;
    font-weight: 700;
    margin-top: 2px;
 }
 
-/* Upload Inputs Zone */
 .upload-wrapper {
    width: 100%;
-   max-width: 340px;
-   margin: 25px 0 20px 0;
-   text-align: center;
+   max-width: 320px;
+   margin-top: 30px;
 }
 
 .upload-label {
    display: block;
    font-weight: 600;
    margin-bottom: 10px;
-   color: #e2e8f0;
+   color: rgba(255, 255, 255, 0.85);
    font-size: 13px;
    text-align: left;
-   padding-left: 2px;
 }
 
 .file-box {
@@ -163,110 +165,157 @@ body {
 
 .file-box:hover {
    border-color: #00ff87;
-   background: rgba(0, 255, 135, 0.04);
+   background: rgba(0, 255, 135, 0.05);
 }
 
-/* Premium Action Button Layout */
-.pay-btn {
-   background: linear-gradient(135deg, #00ff87 0%, #60efff 100%);
-   padding: 14px;
-   font-size: 15px;
-   font-weight: 700;
-   color: #0b1511;
-   border-radius: 12px;
-   border: none;
-   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-   cursor: pointer;
-   width: 100%;
-   max-width: 340px;
-   text-align: center;
-   letter-spacing: -0.2px;
-}
-
-.pay-btn:hover {
-   transform: translateY(-2px);
-   box-shadow: 0px 12px 30px rgba(0, 255, 135, 0.4);
-   background: linear-gradient(135deg, #00ff87 0%, #60efff 100%);
-   color: #0b1511;
-}
-
-/* --- RIGHT PANEL (STATEMENT INVOICE) --- */
+/* --- RIGHT INVOICE ACCOUNTING STAGE --- */
 .invoice-panel {
-   flex: 1;
+   flex: 1.2;
    background: rgba(15, 23, 42, 0.2);
+   border: 1px solid rgba(255, 255, 255, 0.04);
    border-radius: 20px;
-   padding: 30px;
+   padding: 25px;
    display: flex;
    flex-direction: column;
    justify-content: space-between;
 }
 
+.invoice-matrix-container {
+   background: rgba(255, 255, 255, 0.03);
+   border: 1px solid rgba(255, 255, 255, 0.07);
+   border-radius: 16px;
+   padding: 20px;
+   margin-top: 20px;
+}
+
+.matrix-heading {
+   font-size: 1.1rem;
+   font-weight: 700;
+   margin-bottom: 20px;
+   color: #ffffff;
+   letter-spacing: -0.2px;
+}
+
 .invoice-matrix {
    display: flex;
    flex-direction: column;
-   width: 100%;
-   margin-top: 25px;
 }
 
 .matrix-row {
    display: flex;
    justify-content: space-between;
    align-items: center;
-   margin-bottom: 16px;
-   color: #94a3b8;
-   font-size: 14px;
-   width: 100%;
+   margin-bottom: 14px;
+   color: rgba(255, 255, 255, 0.7);
+   font-size: 14.5px;
 }
 
 .row-value {
-   font-weight: 600;
-   color: #f1f5f9;
+   font-weight: 500;
+   color: #ffffff;
 }
 
 .discount-badge {
-   color: #00ff87;
-   font-weight: 600;
-   background: rgba(0, 255, 135, 0.1);
-   padding: 2px 8px;
-   border-radius: 6px;
-   font-size: 13px;
+   color: rgba(255, 255, 255, 0.85);
+   font-weight: 500;
 }
 
 .divider {
-   border-top: 1px solid rgba(255, 255, 255, 0.08);
-   margin: 15px 0;
+   border-top: 1px solid rgba(255, 255, 255, 0.15);
+   margin: 12px 0;
 }
 
-/* Total Price Adjustments */
 .total-row {
    margin-top: 5px;
+   margin-bottom: 0;
 }
 
 .total-label {
-   font-weight: 600;
-   font-size: 15px;
+   font-weight: 700;
+   font-size: 1.15rem;
    color: #ffffff;
-   text-transform: uppercase;
-   letter-spacing: 0.5px;
 }
 
 .total-value {
    font-weight: 800;
-   font-size: 1.5rem;
-   color: #ffffff;
-   background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 100%);
-   -webkit-background-clip: text;
-   -webkit-text-fill-color: transparent;
+   font-size: 1.45rem;
+   color: #00e5ff;
 }
 
-/* Operational Footnote Disclaimer */
+/* Footnote Block Elements Placement */
+.invoice-bottom-actions {
+   margin-top: 25px;
+}
+
 .disclaimer-text {
-   color: #94a3b8;
+   color: rgba(255, 255, 255, 0.6);
    font-size: 12px;
    line-height: 1.6;
-   background: rgba(255, 255, 255, 0.03);
-   border: 1px solid rgba(255, 255, 255, 0.05);
-   padding: 14px;
+   margin-bottom: 20px;
+}
+
+/* Cyan Interactive CTA Action Controller Button */
+.pay-btn {
+   background: #00ebd3;
+   padding: 15px;
+   font-size: 15px;
+   font-weight: 700;
+   color: #06110d;
    border-radius: 12px;
-   margin-top: 30px;
+   border: none;
+   cursor: pointer;
+   width: 100%;
+   text-align: center;
+   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+   box-shadow: 0 4px 15px rgba(0, 235, 211, 0.2);
+}
+
+.pay-btn:hover {
+   transform: translateY(-2px);
+   box-shadow: 0px 12px 25px rgba(0, 235, 211, 0.45);
+   background: #00ffd5;
+}
+
+/* 📱 BREAKPOINT RENDER MEDIA CONTROLLER RULES (Mobile UI Responsive Optimization) */
+@media (max-width: 868px) {
+   body {
+       padding: 15px;
+       justify-content: flex-start;
+       overflow-y: auto;
+   }
+   
+   .brand-bg-title {
+       font-size: 1.8rem;
+       margin-bottom: 15px;
+   }
+
+   .glass-container {
+       padding: 15px;
+       border-radius: 18px;
+   }
+
+   .checkout-combined-form {
+       flex-direction: column; /* Stacks layout vertically on mobile */
+       gap: 20px;
+   }
+
+   .payment-panel, .invoice-panel {
+       flex: none;
+       width: 100%;
+       padding: 20px;
+   }
+   
+   .inner-gateway-box {
+       padding: 15px;
+   }
+
+   .qr-crop-box {
+       width: 150px;
+       height: 150px;
+   }
+   
+   .upload-wrapper {
+       max-width: 100%;
+       margin-top: 20px;
+   }
 }
