@@ -45,7 +45,7 @@ def admin_login(request):
         password = request.POST.get('password')
         user = authenticate(username=username,password=password)
         try:
-            if user.is_staff:
+            if user and user.is_staff:
                 login(request,user)
                 messages.success(request,"User login successfully")
                 return redirect('admin_dashboard')#url.py lo name lo unna value ivvali
