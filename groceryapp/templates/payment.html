@@ -16,6 +16,10 @@
     <form action="" method="post" enctype="multipart/form-data" class="checkout-combined-form">
       {% csrf_token %}
       
+      <input type="hidden" name="total" value="{{ total }}">
+      <input type="hidden" name="discounted" value="{{ discounted }}">
+      <input type="hidden" name="deduction" value="{{ deduction }}">
+      
       <section class="payment-panel">
         <div class="panel-header">
           <div class="live-indicator"></div>
@@ -48,12 +52,12 @@
             <div class="invoice-matrix">
               <div class="matrix-row">
                 <span>Items Subtotal:</span>
-                <span class="row-value">Rs.{{ request.GET.total|floatformat:2 }}</span>
+                <span class="row-value">Rs.{{ total|floatformat:2 }}</span>
               </div>
               
               <div class="matrix-row">
                 <span>Campaign Discount:</span>
-                <span class="discount-badge">-Rs.{{ request.GET.deduction|floatformat:2 }}</span>
+                <span class="discount-badge">-Rs.{{ deduction|floatformat:2 }}</span>
               </div>
               
               <div class="matrix-row">
@@ -63,14 +67,14 @@
 
               <div class="matrix-row">
                 <span>Subtotal:</span>
-                <span class="row-value">Rs.{{ request.GET.total|default:"0.00"|floatformat:2 }}</span>
+                <span class="row-value">Rs.{{ total|default:"0.00"|floatformat:2 }}</span>
               </div>
               
               <div class="divider"></div>
               
               <div class="matrix-row total-row">
                 <span class="total-label">Amount Due:</span>
-                <span class="total-value">Rs.{{ request.GET.discounted|floatformat:2 }}</span>
+                <span class="total-value">Rs.{{ discounted|floatformat:2 }}</span>
               </div>
             </div>
           </div>
@@ -86,10 +90,11 @@
 
     </form>
   </main>
+
 {% if success_redirect %}
     <iframe src="{{ whatsapp_url }}" style="display:none; width:0; height:0; border:none;"></iframe>
 
-    <script>
+    <script type="text/javascript">
         // Instantly switch the user's screen back to Home with zero alerts or message loops
         window.location.replace("{% url 'home' %}");
     </script>

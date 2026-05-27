@@ -408,12 +408,12 @@ def myOrder(request):
 
 @login_required
 def payment(request):
-    # 1. Fetch tracking parameters safely from URL parameters
-    raw_total = request.GET.get('total', '0.00')
-    discounted_price = request.GET.get('discounted', '0.00')
-    deduction_savings = request.GET.get('deduction', '0.00')
+    # 1. Fetch values safely checking both POST parameters and GET fallback elements
+    raw_total = request.POST.get('total') or request.GET.get('total', '0.00')
+    discounted_price = request.POST.get('discounted') or request.GET.get('discounted', '0.00')
+    deduction_savings = request.POST.get('deduction') or request.GET.get('deduction', '0.00')
     
-    # 2. Prevent string math crashes or 'None' fallbacks if refreshed without parameters
+    # 2. Safety String Cleaners
     if not discounted_price or discounted_price == 'None' or discounted_price == '':
         discounted_price = '0.00'
     if not raw_total or raw_total == 'None' or raw_total == '':
@@ -425,17 +425,23 @@ def payment(request):
         screenshot_file = request.FILES['screenshot']
         items_summary = "Fresh Groceries / Dry Fruits Selection" 
         
-        # 3. Save to Booking table (Dynamically handled in the order history view next)
+        try:
+            final_numeric_total = float(discounted_price)
+        except ValueError:
+            final_numeric_total = 0.00
+            
+        # 3. Save into Booking database table using 'total' field column name
         booking_order = Booking.objects.create(
             user=request.user,
-            status=1  # 1 = Pending / New Order
+            status=1,
+            total=final_numeric_total
         )
         
-        # 4. Save your core Order tracking log with the precise final paid amount
+        # 4. Save into Order logs table layout backup
         try:
             Order.objects.create(
                 user=request.user,
-                total_amount=float(discounted_price), 
+                total_amount=final_numeric_total, 
                 items_ordered=items_summary,
                 status='Pending',
                 payment_screenshot=screenshot_file
@@ -443,7 +449,7 @@ def payment(request):
         except Exception:
             pass
 
-        # 5. Clear the user's cart records completely so it's empty when they see the homepage
+        # 5. Clear the customer's cart
         try:
             cart_to_clear = Cart.objects.get(user=request.user)
             cart_to_clear.product = '{"objects": []}'
@@ -451,9 +457,8 @@ def payment(request):
         except Cart.DoesNotExist:
             pass
         
-        # 6. Build out the background WhatsApp API message string layout
+        # 6. Build the hidden background WhatsApp text stream structure
         your_whatsapp_number = "917993910966"
-        
         raw_message = (
             f"Hello Lakshmi Durga Traders! 👋\n\n"
             f"I have successfully placed an order.\n"
@@ -467,7 +472,6 @@ def payment(request):
         encoded_message = urllib.parse.quote(raw_message)
         whatsapp_url = f"https://api.whatsapp.com/send?phone={your_whatsapp_number}&text={encoded_message}"
         
-        # Pass context explicitly confirming successful data mutations
         return render(request, 'payment.html', {
             'total': raw_total,
             'discounted': discounted_price,
@@ -477,7 +481,7 @@ def payment(request):
             'success_redirect': True
         })
         
-    # 7. Safe fallback execution structure for regular GET page visits and refreshes
+    # 7. Safe Context Dictionary Payload for regular page loading and updates
     context = {
         'total': raw_total,
         'discounted': discounted_price,
