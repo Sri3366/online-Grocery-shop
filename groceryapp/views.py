@@ -399,36 +399,55 @@ def booking(request):
     return render(request, "booking.html", locals())
  
 
+@login_required
 def myOrder(request):
-    order = Booking.objects.filter(user=request.user)
+    bookings = Booking.objects.filter(user=request.user).order_by('-id')
+    
+    # Map the stored checkout values to the template loop variables
+    for b in bookings:
+        try:
+            matching_order = Order.objects.filter(user=request.user).order_by('-id').first()
+            if matching_order:
+                b.dynamic_price = matching_order.total_amount
+            else:
+                b.dynamic_price = "0.00"
+        except Exception:
+            b.dynamic_price = "0.00"
+            
+    order = bookings 
     return render(request, "my-order.html", locals())
+
+
+
+
+
 
 @login_required
 def payment(request):
-    # 1. Fetch tracking parameters safely from URL strings
+    # 1. Fetch tracking parameters safely from URL parameters
     raw_total = request.GET.get('total', '0.00')
     discounted_price = request.GET.get('discounted', '0.00')
     deduction_savings = request.GET.get('deduction', '0.00')
     
-    # 2. Safety Fallbacks: If URL parameters are empty or missing, prevent mathematical crashes
-    if not discounted_price or discounted_price == 'None':
+    # 2. Prevent string math crashes or 'None' fallbacks if refreshed without parameters
+    if not discounted_price or discounted_price == 'None' or discounted_price == '':
         discounted_price = '0.00'
-    if not raw_total or raw_total == 'None':
+    if not raw_total or raw_total == 'None' or raw_total == '':
         raw_total = '0.00'
-    if not deduction_savings or deduction_savings == 'None':
+    if not deduction_savings or deduction_savings == 'None' or deduction_savings == '':
         deduction_savings = '0.00'
 
     if request.method == "POST" and request.FILES.get('screenshot'):
         screenshot_file = request.FILES['screenshot']
         items_summary = "Fresh Groceries / Dry Fruits Selection" 
         
-        # Save directly to Booking table with real price to fix "Rs. None"
+        # 3. Save to Booking table (Dynamically handled in the order history view next)
         booking_order = Booking.objects.create(
             user=request.user,
-            status=1
+            status=1  # 1 = Pending / New Order
         )
         
-        # Save your Order log backup with parsed floats safely
+        # 4. Save your core Order tracking log with the precise final paid amount
         try:
             Order.objects.create(
                 user=request.user,
@@ -440,7 +459,7 @@ def payment(request):
         except Exception:
             pass
 
-        # Clear the user's cart records completely
+        # 5. Clear the user's cart records completely so it's empty when they see the homepage
         try:
             cart_to_clear = Cart.objects.get(user=request.user)
             cart_to_clear.product = '{"objects": []}'
@@ -448,9 +467,8 @@ def payment(request):
         except Cart.DoesNotExist:
             pass
         
-        # Construct the background WhatsApp API string layout
+        # 6. Build out the background WhatsApp API message string layout
         your_whatsapp_number = "917993910966"
-        delivery_timeframe = "1 hour"
         
         raw_message = (
             f"Hello Lakshmi Durga Traders! 👋\n\n"
@@ -465,19 +483,23 @@ def payment(request):
         encoded_message = urllib.parse.quote(raw_message)
         whatsapp_url = f"https://api.whatsapp.com/send?phone={your_whatsapp_number}&text={encoded_message}"
         
-        # Pass variables to payment.html to let the hidden iframe process everything silently
+        # Pass context explicitly confirming successful data mutations
         return render(request, 'payment.html', {
+            'total': raw_total,
+            'discounted': discounted_price,
+            'deduction': deduction_savings,
             'trigger_whatsapp': True,
             'whatsapp_url': whatsapp_url,
             'success_redirect': True
         })
         
-    # 3. GET Request Safety Layout context
+    # 7. Safe fallback execution structure for regular GET page visits and refreshes
     context = {
         'total': raw_total,
         'discounted': discounted_price,
         'deduction': deduction_savings,
-        'trigger_whatsapp': False
+        'trigger_whatsapp': False,
+        'success_redirect': False
     }
     return render(request, 'payment.html', context)
 
