@@ -1,261 +1,133 @@
 {% extends 'navigation.html' %}
 {% load static %}
 
+{% block body %}
+    <div style="background: rgba(255,255,255,0.05); padding: 10px; text-align: center; color: gray; font-size: 12px;">
+        System Status: Guest Portal Mode Active (Body Block)
+    </div>
+    {% include "groceryapp/carousel_snippet.html" %}
+{% endblock %}
+
+
 {% block content %}
+    <div style="background: rgba(255,255,255,0.05); padding: 10px; text-align: center; color: gray; font-size: 12px;">
+        System Status: Guest Portal Mode Active (Content Block)
+    </div>
 
-<style>
-    /* Premium Root Slider Container Rules */
-    .premium-carousel {
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        border-radius: 16px;
-        overflow: hidden;
-        margin: 20px auto;
-        max-width: 95%;
-    }
-
-    /* Core Image Stage & Ken Burns Visual Zoom Effect */
-    .premium-carousel .carousel-item {
-        height: 550px;
-        background-color: #0d0d0d;
-        position: relative;
-    }
-    
-    .premium-carousel .carousel-item img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        transition: transform 8s ease-in-out;
-        opacity: 0.85;
-    }
-    
-    /* Subtle zoom effect while slide is actively selected */
-    .premium-carousel .carousel-item.active img {
-        transform: scale(1.06);
-    }
-
-    /* Cinematic Gradient Vignette Overlay */
-    .premium-overlay-gradient {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.2) 100%);
-        z-index: 1;
-    }
-
-    /* Responsive Presentation Caption Block */
-    .premium-caption-stage {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        top: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start;
-        padding-left: 8%;
-        padding-right: 8%;
-        color: #ffffff;
-        z-index: 2;
-        text-align: left !important;
-    }
-
-    /* Elegant Text Reveal Micro-Animations & Responsive Font Sizing */
-    .premium-title {
-        font-family: 'Playfair Display', 'Georgia', serif;
-        font-size: 3.5rem;
-        font-weight: 800;
-        letter-spacing: -0.5px;
-        line-height: 1.2;
-        margin-bottom: 15px;
-        text-shadow: 2px 4px 10px rgba(0, 0, 0, 0.3);
-        transform: translateY(30px);
-        opacity: 0;
-        transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.2s;
-    }
-    
-    .premium-desc {
-        font-size: 1.2rem;
-        font-weight: 300;
-        line-height: 1.6;
-        color: rgba(255, 255, 255, 0.9);
-        max-width: 600px;
-        margin-bottom: 30px;
-        text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.3);
-        transform: translateY(30px);
-        opacity: 0;
-        transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
-    }
-
-    .premium-btn {
-        background: linear-gradient(135deg, #ff9900 0%, #ff5500 100%);
-        color: white !important;
-        font-weight: 600;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        padding: 14px 32px;
-        border: none;
-        border-radius: 50px;
-        box-shadow: 0 8px 20px rgba(255, 102, 0, 0.3);
-        transform: translateY(30px);
-        opacity: 0;
-        text-decoration: none;
-        transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.6s;
-    }
-
-    .premium-btn:hover {
-        transform: translateY(-3px) !important;
-        box-shadow: 0 12px 25px rgba(255, 102, 0, 0.5);
-    }
-
-    /* Triggers text slide-up animations cleanly on active slide swap */
-    .carousel-item.active .premium-title,
-    .carousel-item.active .premium-desc,
-    .carousel-item.active .premium-btn {
-        transform: translateY(0);
-        opacity: 1;
-    }
-
-    /* Sleek Line Dash Slide Indicators */
-    .premium-indicators button {
-        width: 35px !important;
-        height: 4px !important;
-        border-radius: 2px;
-        background-color: rgba(255, 255, 255, 0.4) !important;
-        border: none !important;
-        margin: 0 5px !important;
-        transition: all 0.3s ease !important;
-    }
-    
-    .premium-indicators .active {
-        width: 55px !important;
-        background-color: #ff9900 !important;
-    }
-
-    /* Glassmorphic Minimalist Navigation Arrows */
-    .premium-ctrl {
-        width: 8%;
-        z-index: 3;
-    }
-
-    .premium-ctrl-icon-wrap {
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 12px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-
-    .premium-ctrl:hover .premium-ctrl-icon-wrap {
-        background: #ff9900;
-        border-color: #ff9900;
-        transform: scale(1.1);
-        color: white;
-    }
-
-    /* 📱 RESPONSIVE BREAKPOINTS (Mobile & Tablet Optimization) */
-    @media (max-width: 991px) {
-        .premium-carousel .carousel-item {
-            height: 450px;
-        }
-        .premium-title {
-            font-size: 2.5rem;
-        }
-        .premium-desc {
-            font-size: 1.1rem;
-            max-width: 80%;
-        }
-    }
-
-    @media (max-width: 768px) {
+    <style>
         .premium-carousel {
-            max-width: 100%;
-            margin: 10px auto;
-            border-radius: 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 20px auto;
+            max-width: 95%;
         }
         .premium-carousel .carousel-item {
-            height: 380px;
+            height: 550px;
+            background-color: #0d0d0d;
+            position: relative;
+        }
+        .premium-carousel .carousel-item img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 8s ease-in-out;
+            opacity: 0.85;
+        }
+        .premium-carousel .carousel-item.active img {
+            transform: scale(1.06);
         }
         .premium-overlay-gradient {
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.85) 100%);
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.2) 100%);
+            z-index: 1;
         }
         .premium-caption-stage {
-            align-items: center;
-            text-align: center !important;
-            padding-left: 5%;
-            padding-right: 5%;
-            justify-content: flex-end;
-            padding-bottom: 50px;
+            position: absolute;
+            bottom: 0; left: 0; top: 0; right: 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+            padding-left: 8%; padding-right: 8%; color: #ffffff; z-index: 2; text-align: left !important;
         }
         .premium-title {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 800; margin-bottom: 15px;
+            text-shadow: 2px 4px 10px rgba(0, 0, 0, 0.3); transform: translateY(30px); opacity: 0;
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.2s;
         }
         .premium-desc {
-            font-size: 0.95rem;
-            max-width: 100%;
-            margin-bottom: 20px;
+            font-size: 1.2rem; font-weight: 300; line-height: 1.6; color: rgba(255, 255, 255, 0.9);
+            max-width: 600px; margin-bottom: 30px; text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.3);
+            transform: translateY(30px); opacity: 0; transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
         }
         .premium-btn {
-            padding: 10px 24px;
-            font-size: 0.8rem;
+            background: linear-gradient(135deg, #ff9900 0%, #ff5500 100%);
+            color: white !important; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+            font-size: 0.85rem; padding: 14px 32px; border: none; border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(255, 102, 0, 0.3); transform: translateY(30px); opacity: 0;
+            text-decoration: none; transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.6s;
         }
-        .premium-ctrl {
-            display: none;
+        .premium-btn:hover {
+            transform: translateY(-3px) !important; box-shadow: 0 12px 25px rgba(255, 102, 0, 0.5);
         }
-    }
-</style>
+        .carousel-item.active .premium-title,
+        .carousel-item.active .premium-desc,
+        .carousel-item.active .premium-btn {
+            transform: translateY(0); opacity: 1;
+        }
+        .premium-indicators button {
+            width: 35px !important; height: 4px !important; border-radius: 2px;
+            background-color: rgba(255, 255, 255, 0.4) !important; border: none !important; margin: 0 5px !important;
+        }
+        .premium-indicators .active { width: 55px !important; background-color: #ff9900 !important; }
+        .premium-ctrl { width: 8%; z-index: 3; }
+        .premium-ctrl-icon-wrap {
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        @media (max-width: 991px) {
+            .premium-carousel .carousel-item { height: 450px; }
+            .premium-title { font-size: 2.5rem; }
+        }
+        @media (max-width: 768px) {
+            .premium-carousel { border-radius: 0; }
+            .premium-carousel .carousel-item { height: 380px; }
+            .premium-caption-stage { align-items: center; text-align: center !important; justify-content: flex-end; padding-bottom: 50px; }
+            .premium-title { font-size: 1.8rem; }
+            .premium-ctrl { display: none; }
+        }
+    </style>
 
-<div id="premiumStorefrontHero" class="carousel slide premium-carousel" data-bs-ride="carousel" data-bs-interval="6000">
-  
-  <div class="carousel-indicators premium-indicators">
-    {% for i in carousel %}
-      <button type="button" data-bs-target="#premiumStorefrontHero" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}"></button>
-    {% endfor %}
-  </div>
- 
-  <div class="carousel-inner">
-    {% for i in carousel %}
-    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-      
-      {% if i.image %}
-        <img src="{{ i.image.url }}" class="d-block w-100" alt="{{ i.title }}">
-      {% else %}
-        <img src="{% static 'images/carousel.png' %}" class="d-block w-100" alt="{{ i.title }}">
-      {% endif %}
-      
-      <div class="premium-overlay-gradient"></div>
-      
-      <div class="premium-caption-stage">
-        <h1 class="premium-title">{{ i.title }}</h1>
-        <p class="premium-desc">{{ i.description }}</p>
-        <a href="/user-product/0/" class="premium-btn">Explore Collection</a>
+    <div id="premiumStorefrontHero" class="carousel slide premium-carousel" data-bs-ride="carousel" data-bs-interval="6000">
+      <div class="carousel-indicators premium-indicators">
+        {% for i in carousel %}
+          <button type="button" data-bs-target="#premiumStorefrontHero" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></button>
+        {% endfor %}
       </div>
-
+     
+      <div class="carousel-inner">
+        {% for i in carousel %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          {% if i.image %}
+            <img src="{{ i.image.url }}" class="d-block w-100" alt="{{ i.title }}">
+          {% else %}
+            <img src="{% static 'images/carousel.png' %}" class="d-block w-100" alt="{{ i.title }}">
+          {% endif %}
+          <div class="premium-overlay-gradient"></div>
+          <div class="premium-caption-stage">
+            <h1 class="premium-title">{{ i.title }}</h1>
+            <p class="premium-desc">{{ i.description }}</p>
+            <a href="/user-product/0/" class="premium-btn">Explore Collection</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      
+      <button class="carousel-control-prev premium-ctrl" type="button" data-bs-target="#premiumStorefrontHero" data-bs-slide="prev">
+        <div class="premium-ctrl-icon-wrap"><span class="carousel-control-prev-icon"></span></div>
+      </button>
+      <button class="carousel-control-next premium-ctrl" type="button" data-bs-target="#premiumStorefrontHero" data-bs-slide="next">
+        <div class="premium-ctrl-icon-wrap"><span class="carousel-control-next-icon"></span></div>
+      </button>
     </div>
-    {% endfor %}
-  </div>
-  
-  <button class="carousel-control-prev premium-ctrl" type="button" data-bs-target="#premiumStorefrontHero" data-bs-slide="prev">
-    <div class="premium-ctrl-icon-wrap">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    </div>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next premium-ctrl" type="button" data-bs-target="#premiumStorefrontHero" data-bs-slide="next">
-    <div class="premium-ctrl-icon-wrap">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    </div>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
-
 {% endblock %}
