@@ -1,6 +1,7 @@
 {% extends 'navigation.html' %}
 {% load static %}
-{% block body %}
+
+{% block content %}
 
 <style>
     /* Premium Root Slider Container Rules */
@@ -178,7 +179,7 @@
         .premium-carousel {
             max-width: 100%;
             margin: 10px auto;
-            border-radius: 0; /* Full bleed edge-to-edge on small phones */
+            border-radius: 0;
         }
         .premium-carousel .carousel-item {
             height: 380px;
@@ -208,7 +209,7 @@
             font-size: 0.8rem;
         }
         .premium-ctrl {
-            display: none; /* Hide arrow keys on small phones to maximize touch interaction space */
+            display: none;
         }
     }
 </style>
@@ -225,7 +226,12 @@
     {% for i in carousel %}
     <div class="carousel-item {% if forloop.first %}active{% endif %}">
       
-      <img src="{% static 'images/carousel.png' %}" class="d-block w-100" alt="{{ i.title }}">
+      {% if i.image %}
+        <img src="{{ i.image.url }}" class="d-block w-100" alt="{{ i.title }}">
+      {% else %}
+        <img src="{% static 'images/carousel.png' %}" class="d-block w-100" alt="{{ i.title }}">
+      {% endif %}
+      
       <div class="premium-overlay-gradient"></div>
       
       <div class="premium-caption-stage">

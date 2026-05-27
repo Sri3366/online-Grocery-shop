@@ -237,7 +237,7 @@ def profile(request):
 def logoutUser(request):
     logout(request)
     messages.success(request,"Logout Successfully...")
-    return redirect('main')
+    return redirect('home')
 
 def change_password(request):
     if request.method == 'POST':
@@ -258,7 +258,7 @@ def change_password(request):
                 update_session_auth_hash(request, user)
                 
                 messages.success(request, "Password Changed Successfully!")
-                return redirect('main')
+                return redirect('home')
             else:
                 messages.error(request, "New Password fields do not match.")
                 return redirect('change_password')
@@ -562,7 +562,7 @@ def admin_change_password(request):
                 user.set_password(n)
                 user.save()
                 messages.success(request, "Password Changed")
-                return redirect('main')
+                return redirect('home')
             else:
                 messages.success(request, "Password not matching")
                 return redirect('admin_change_password')
